@@ -1,0 +1,12 @@
+[package]
+name = "make_test_signature"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.99"
+ark-bn254 = "0.4.0"
+ark-ec = "0.4.2"
+ark-ff = "0.4.2"
+dcipher-agents = { git = "https://github.com/randa-mu/dcipher", version = "0.1.0", features = ["signer"] }
+rand = "0.8.5"
