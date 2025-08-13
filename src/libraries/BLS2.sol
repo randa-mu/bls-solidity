@@ -18,8 +18,14 @@ library BLS2 {
     }
 
     struct PointG2 {
-        bytes[96] x;
-        bytes[96] y;
+        uint128 x0_hi;
+        uint256 x0_lo;
+        uint128 x1_hi;
+        uint256 x1_lo;
+        uint128 y0_hi;
+        uint256 y0_lo;
+        uint128 y1_hi;
+        uint256 y1_lo;
     }
 
     // GfP2 implements a field of size p² as a quadratic extension of the base field.
@@ -27,6 +33,15 @@ library BLS2 {
         uint256 x;
         uint256 y;
     }
+
+    uint128 private constant N_G2_X0_HI = 0x024aa2b2f08f0a91260805272dc51051;
+    uint256 private constant N_G2_X0_LO = 0xc6e47ad4fa403b02b4510b647ae3d1770bac0326a805bbefd48056c8c121bdb8;
+    uint128 private constant N_G2_X1_HI = 0x13e02b6052719f607dacd3a088274f65;
+    uint256 private constant N_G2_X1_LO = 0x596bd0d09920b61ab5da61bbdc7f5049334cf11213945d57e5ac7d055d042b7e;
+    uint128 private constant N_G2_Y0_HI = 0x0d1b3cc2c7027888be51d9ef691d77bc;
+    uint256 private constant N_G2_Y0_LO = 0xb679afda66c73f17f9ee3837a55024f78c71363275a75d75d86bab79f74782aa;
+    uint128 private constant N_G2_Y1_HI = 0x13fa4d4a0ad8b1ce186ed5061789213d;
+    uint256 private constant N_G2_Y1_LO = 0x993923066dddaf1040bc3ff59f825c78df74f2d75467e25e0f55f8a00fa030ed;
 
     // Field order
     uint128 private constant p_hi = 0x1a0111ea397fe69a4b1ba7b6434bacd7;
@@ -122,5 +137,49 @@ library BLS2 {
             mstore(p, bi)
         }
         return out;
+    }
+
+    /// @notice Verify signed message on g1 against signature on g1 and public key on g2
+    /// @param signature Signature to check
+    /// @param pubkey Public key of signer
+    /// @param message Message to check
+    /// @return pairingSuccess bool indicating if the pairing check was successful
+    /// @return callSuccess bool indicating if the static call to the evm precompile was successful
+    function verifySingle(PointG1 memory signature, PointG2 memory pubkey, PointG1 memory message)
+        internal
+        view
+        returns (bool pairingSuccess, bool callSuccess)
+    {
+        uint256[24] memory input = [
+            signature.x_hi,
+            signature.x_lo,
+            signature.y_hi,
+            signature.y_lo,
+            N_G2_X0_HI,
+            N_G2_X0_LO,
+            N_G2_X1_HI,
+            N_G2_X1_LO,
+            N_G2_Y0_HI,
+            N_G2_Y0_LO,
+            N_G2_Y1_HI,
+            N_G2_Y1_LO,
+            message.x_hi,
+            message.x_lo,
+            message.y_hi,
+            message.y_lo,
+            pubkey.x0_hi,
+            pubkey.x0_lo,
+            pubkey.x1_hi,
+            pubkey.x1_lo,
+            pubkey.y0_hi,
+            pubkey.y0_lo,
+            pubkey.y1_hi,
+            pubkey.y1_lo
+        ];
+        uint256[1] memory out;
+        assembly {
+            callSuccess := staticcall(sub(gas(), 2000), 0xf, input, 768, out, 0x20)
+        }
+        return (out[0] != 0, callSuccess);
     }
 }

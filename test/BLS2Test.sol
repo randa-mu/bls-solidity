@@ -15,7 +15,16 @@ contract BLSTest is Test {
         string memory dst = "BLS12_381G1_XMD:KECCAK-256_SVDW_RO";
 
         // pasted
-        // pk = BLS2.PointG2(0x0736e4fdafcb1b37029b49e4fe525c6a, 0x3c982c71be446835ad74b1b86686c5eb130b3df18ca51ad742cae7e21cc552b7, 0x151d28ec5db81b4d27911c358da9f9ef, 0x3dcb2a2ecefbea7f4d9223ee5632c4f093dbdc6905404a9606061a27fcaf023f, 0x103e3d0230bf1b1d7bd8edf575e58dbc, 0xde710b38bb748a1ce6ded4796561793638b23b4d8af4c263405f6137c9ca1f57, 0x19a06c0da612175f5126038cfbc66d40, 0xc07a99aeb7a95c89525ceb7aa8ecd370156f468a15c428f80159b58a98a44f35);
+        pk = BLS2.PointG2(
+            0x0736e4fdafcb1b37029b49e4fe525c6a,
+            0x3c982c71be446835ad74b1b86686c5eb130b3df18ca51ad742cae7e21cc552b7,
+            0x151d28ec5db81b4d27911c358da9f9ef,
+            0x3dcb2a2ecefbea7f4d9223ee5632c4f093dbdc6905404a9606061a27fcaf023f,
+            0x103e3d0230bf1b1d7bd8edf575e58dbc,
+            0xde710b38bb748a1ce6ded4796561793638b23b4d8af4c263405f6137c9ca1f57,
+            0x19a06c0da612175f5126038cfbc66d40,
+            0xc07a99aeb7a95c89525ceb7aa8ecd370156f468a15c428f80159b58a98a44f35
+        );
         message = "hello";
         m_expected = BLS2.PointG1(
             0x0cb2f2bb960dd951ed7582d68ff0ff1d,
@@ -43,6 +52,8 @@ contract BLSTest is Test {
         assert(m.x_lo == m_expected.x_lo);
         assert(m.y_hi == m_expected.y_hi);
         assert(m.y_lo == m_expected.y_lo);
-        // BLS2.verifySingle(sig, pk, m);
+        (bool pairingSuccess, bool callSuccess) = BLS2.verifySingle(sig, pk, m);
+        assert(pairingSuccess);
+        assert(callSuccess);
     }
 }
