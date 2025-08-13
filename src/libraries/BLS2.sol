@@ -47,36 +47,21 @@ library BLS2 {
     uint128 private constant p_hi = 0x1a0111ea397fe69a4b1ba7b6434bacd7;
     uint256 private constant p_lo = 0x64774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab;
 
-    // Generator of G1
-    // per EIP-2537
-    function H1() external pure returns (PointG1 memory r) {
-        r.x_hi = 0x17f1d3a73197d7942695638c4fa9ac0f;
-        r.x_lo = 0xc3688c4f9774b905a14e3a3f171bac586c55e83ff97a1aeffb3af00adb22c6bb;
-        r.y_hi = 0x08b3f481e3aaa0f1a09e30ed741d8ae4;
-        r.y_lo = 0xfcf5e095d5d00af600db18cb2c04b3edd03cc744a2888ae40caa232946c5e7e1;
-    }
-
-    error BlsAddFailed(bytes[48][4] input);
-    error InvalidFieldElement(bytes[48] x);
-    error MapToPointFailed(uint256 noSqrt);
     error InvalidDSTLength(bytes dst);
-    error ModExpFailed(uint256 base, uint256 exponent, uint256 modulus);
 
     // follows RFC9380 §5
-    function hashToPoint(bytes memory dst, bytes memory message) internal view returns (PointG1 memory) {
+    function hashToPoint(bytes memory dst, bytes memory message) internal view returns (PointG1 memory out) {
         bytes memory uniform_bytes = expandMsg(dst, message, 128);
-        console.logBytes(uniform_bytes);
-        bytes memory buf = new bytes(1024);
+        bytes memory buf = new bytes(225);
         bytes memory buf2 = new bytes(256);
         bool ok;
-        uint256 p;
-        uint256 q;
         for (uint256 i = 0; i < 2; i++) {
-            // inplace mod in uniform_bytes[64*i]
             assembly {
-                p := add(32, uniform_bytes)
+                // inplace mod in uniform_bytes[64*i]
+                let p := add(32, uniform_bytes)
+                let q := add(32, buf)
+
                 p := add(p, mul(64, i))
-                q := add(32, buf)
                 mstore(q, 64) // length of base
                 q := add(q, 32)
                 mstore(q, 1) // length of exponent 1
@@ -90,22 +75,19 @@ library BLS2 {
                 mstore(q, p_hi)
                 q := add(q, 32)
                 mstore(q, p_lo)
-                q := add(32, buf)
-                ok := staticcall(gas(), 5, q, 225, p, 64)
-            }
-            require(ok, "expmod failed");
-            // EIP-2537 map_fp_to_g1
-            assembly {
+                ok := staticcall(gas(), 5, add(32, buf), 225, p, 64)
+
+                // EIP-2537 map_fp_to_g1
                 let r := add(32, buf2)
                 r := add(r, mul(128, i))
-                ok := staticcall(gas(), 16, p, 64, r, 128)
+                ok := and(ok, staticcall(gas(), 16, p, 64, r, 128))
             }
-            require(ok, "map_fp_to_g1 failed");
+            require(ok);
         }
-        bytes memory buf3 = new bytes(128);
-        (ok, buf3) = address(0x0b).staticcall(buf2);
+        assembly {
+            ok := staticcall(gas(), 0x0b, add(buf2, 32), 256, out, 128)
+        }
         require(ok, "g1add failed");
-        return abi.decode(buf3, (PointG1));
     }
 
     // FIXME copypaste from BLS.sol

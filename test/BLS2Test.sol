@@ -6,7 +6,7 @@ import {Test, console} from "forge-std-1.10.0/src/Test.sol";
 import {BLS} from "src/libraries/BLS.sol";
 import {BLS2} from "src/libraries/BLS2.sol";
 
-contract BLSTest is Test {
+contract BLS2Test is Test {
     function test_sample_signature() public view {
         BLS2.PointG2 memory pk;
         BLS2.PointG1 memory sig;
