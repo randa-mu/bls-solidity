@@ -93,8 +93,7 @@ dependencies = [
 [[package]]
 name = "ark-ff"
 version = "0.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec847af850f44ad29048935519032c33da8aa03340876d351dfab5660d2966ba"
+source = "git+https://github.com/azixus/algebra?branch=fix%2FfieldHasher#c07b20ab366b8f662e80a2c081e0ab718c54f550"
 dependencies = [
  "ark-ff-asm",
  "ark-ff-macros",
@@ -102,6 +101,7 @@ dependencies = [
  "ark-std",
  "derivative",
  "digest",
+ "hex",
  "itertools 0.10.5",
  "num-bigint",
  "num-traits",
@@ -511,6 +511,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "hex"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
+
+[[package]]
 name = "indexmap"
 version = "2.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -602,6 +608,7 @@ dependencies = [
  "ark-std",
  "dcipher-signer",
  "digest",
+ "hex",
  "rand",
  "sha3",
  "utils",

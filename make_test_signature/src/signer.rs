@@ -1,5 +1,5 @@
-use ark_ec::pairing::Pairing;
 use ark_ec::AffineRepr;
+use ark_ec::pairing::Pairing;
 use dcipher_signer::{BlsSigner, BlsVerifier};
 use std::convert::Infallible;
 use std::ops::Neg;
@@ -8,18 +8,18 @@ use ark_ec::CurveGroup;
 
 use ark_std::Zero;
 
-use digest::core_api::BlockSizeUser;
 use digest::DynDigest;
+use digest::core_api::BlockSizeUser;
 
 // use utils::hash_to_curve::bn254_bls12_381::bls12_381::bls12381_hash_to_g1_custom;
-fn bls12381_hash_to_g1_custom<H: DynDigest + BlockSizeUser + Default + Clone>(
+pub fn bls12381_hash_to_g1_custom<H: DynDigest + BlockSizeUser + Default + Clone>(
     message: &[u8],
     dst: &[u8],
 ) -> ark_bls12_381::G1Projective {
     use ark_bls12_381::{Config, G1Projective};
     use ark_ec::{
         bls12::Bls12Config,
-        hashing::{curve_maps::wb::WBMap, map_to_curve_hasher::MapToCurveBasedHasher, HashToCurve},
+        hashing::{HashToCurve, curve_maps::wb::WBMap, map_to_curve_hasher::MapToCurveBasedHasher},
     };
     use ark_ff::field_hashers::DefaultFieldHasher;
 
