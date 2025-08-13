@@ -1,5 +1,6 @@
 use ark_ec::AffineRepr;
-use make_test_signature::signer::{BLS12_381SignatureOnG1Signer, bls12381_hash_to_g1_custom};
+use dcipher_signer::BLS12_381SignatureOnG1Signer;
+use utils::hash_to_curve::CustomPairingHashToCurve;
 
 use ark_ff::fields::Field;
 use dcipher_signer::BlsSigner;
@@ -64,7 +65,7 @@ fn main() -> anyhow::Result<()> {
     let cs = BLS12_381SignatureOnG1Signer::new(sk, dst.to_vec());
 
     let msg = "hello";
-    let m_expected = bls12381_hash_to_g1_custom::<sha3::Keccak256>(msg.as_ref(), dst);
+    let m_expected = ark_bls12_381::Bls12_381::hash_to_g1_custom::<sha3::Keccak256>(msg.as_ref(), dst);
     let sig = cs.sign(msg)?;
     println!("pk = {};", solidity_repr_g2(pk.into()));
     println!("message = \"{}\";", msg);

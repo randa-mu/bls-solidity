@@ -272,7 +272,7 @@ dependencies = [
 [[package]]
 name = "dcipher-network"
 version = "0.1.0"
-source = "git+https://github.com/randa-mu/dcipher#6b8daf7df397575c79c04e043c68ffe5bd9c9ce8"
+source = "git+https://github.com/randa-mu/dcipher?branch=feat%2Fbls12_381_signer#d6d04096fc8abddc84d97ff8ad60dc4eacecc989"
 dependencies = [
  "async-trait",
  "futures",
@@ -290,8 +290,9 @@ dependencies = [
 [[package]]
 name = "dcipher-signer"
 version = "0.1.0"
-source = "git+https://github.com/randa-mu/dcipher#6b8daf7df397575c79c04e043c68ffe5bd9c9ce8"
+source = "git+https://github.com/randa-mu/dcipher?branch=feat%2Fbls12_381_signer#d6d04096fc8abddc84d97ff8ad60dc4eacecc989"
 dependencies = [
+ "ark-bls12-381",
  "ark-bn254",
  "ark-ec",
  "ark-ff",
@@ -601,11 +602,8 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "ark-bls12-381",
- "ark-bn254",
  "ark-ec",
  "ark-ff",
- "ark-poly",
- "ark-std",
  "dcipher-signer",
  "digest",
  "hex",
@@ -1188,7 +1186,7 @@ checksum = "5a5f39404a5da50712a4c1eecf25e90dd62b613502b7e925fd4e4d19b5c96512"
 [[package]]
 name = "utils"
 version = "0.1.0"
-source = "git+https://github.com/randa-mu/dcipher#6b8daf7df397575c79c04e043c68ffe5bd9c9ce8"
+source = "git+https://github.com/randa-mu/dcipher?branch=feat%2Fbls12_381_signer#d6d04096fc8abddc84d97ff8ad60dc4eacecc989"
 dependencies = [
  "ark-bls12-381",
  "ark-bn254",
