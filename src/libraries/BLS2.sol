@@ -49,6 +49,43 @@ library BLS2 {
 
     error InvalidDSTLength(bytes dst);
 
+    /// @notice Unmarshals a point on G1 from bytes in an uncompressed form.
+    function g1Unmarshal(bytes memory m) internal pure returns (PointG1 memory) {
+        require(m.length == 96, "Invalid G1 bytes length");
+
+        uint128 x_hi;
+        uint256 x_lo;
+        uint128 y_hi;
+        uint256 y_lo;
+
+        assembly {
+            x_hi := shr(128, mload(add(m, 0x20)))
+            x_lo := mload(add(m, 0x30))
+            y_hi := shr(128, mload(add(m, 0x50)))
+            y_lo := mload(add(m, 0x60))
+        }
+
+        return PointG1(x_hi, x_lo, y_hi, y_lo);
+    }
+
+    /// @notice Marshals a point on G1 to bytes form.
+    function g1Marshal(PointG1 memory point) internal pure returns (bytes memory) {
+        bytes memory m = new bytes(96);
+        uint256 x_hi = point.x_hi;
+        uint256 x_lo = point.x_lo;
+        uint256 y_hi = point.y_hi;
+        uint256 y_lo = point.y_lo;
+
+        assembly {
+            mstore(add(m, 0x20), shl(128, x_hi))
+            mstore(add(m, 0x30), x_lo)
+            mstore(add(m, 0x50), shl(128, y_hi))
+            mstore(add(m, 0x60), y_lo)
+        }
+
+        return m;
+    }
+
     // follows RFC9380 §5
     function hashToPoint(bytes memory dst, bytes memory message) internal view returns (PointG1 memory out) {
         bytes memory uniform_bytes = expandMsg(dst, message, 128);

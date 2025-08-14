@@ -1,5 +1,6 @@
 use ark_ec::AffineRepr;
 use utils::hash_to_curve::CustomPairingHashToCurve;
+use ark_serialize::CanonicalSerialize;
 
 use ark_ff::fields::Field;
 use rand::RngCore;
@@ -22,10 +23,10 @@ fn generate_sk() -> ark_bls12_381::Fr {
 }
 
 fn solidity_repr_g1(p: G1Affine) -> String {
+    let mut buf = vec![];
+    p.serialize_uncompressed(&mut buf).unwrap();
     format!(
-        "BLS2.PointG1({}, {})",
-        solidity_repr_fp(p.x),
-        solidity_repr_fp(p.y)
+        "BLS2.g1Unmarshal(hex\"{}\")", hex::encode(buf)
     )
 }
 
@@ -67,7 +68,7 @@ fn main() -> anyhow::Result<()> {
     let sig = (m * sk).into_affine();
     println!("pk = {};", solidity_repr_g2(pk.into()));
     println!("message = \"{}\";", msg);
-    println!("m_expected = {};", solidity_repr_g1(m.into()));
+    println!("m_expected = {};", solidity_repr_g1(m.into_affine()));
     println!("sig = {};", solidity_repr_g1(sig));
     Ok(())
 }

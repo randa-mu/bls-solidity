@@ -16,6 +16,7 @@ sha2 = "0.10.9"
 sha3 = "0.10"
 
 hex = "0.4.3"
+ark-serialize = "0.4.2"
 
 [patch.crates-io]
 # Use custom patch to fix arkworks' FieldHasher
