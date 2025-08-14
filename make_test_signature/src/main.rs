@@ -1,14 +1,13 @@
 use ark_ec::AffineRepr;
-use dcipher_signer::BLS12_381SignatureOnG1Signer;
 use utils::hash_to_curve::CustomPairingHashToCurve;
 
 use ark_ff::fields::Field;
-use dcipher_signer::BlsSigner;
 use rand::RngCore;
 
 use ark_bls12_381::{Fq, G1Affine, G2Affine};
 use ark_ff::BigInteger;
 use ark_ff::PrimeField;
+use ark_ec::CurveGroup;
 use std::str::FromStr;
 
 fn generate_sk() -> ark_bls12_381::Fr {
@@ -55,21 +54,20 @@ fn solidity_repr_fq2(x: ark_bls12_381::Fq2) -> String {
 }
 
 fn main() -> anyhow::Result<()> {
-    let dst = b"BLS12_381G1_XMD:KECCAK-256_SVDW_RO";
+    let dst = b"BLS12_381G1_XMD:SHA-256_SVDW_RO";
 
     let sk = ark_bls12_381::Fr::from_str(
         "19153223051490343243824650241849417450498737914923078729384628564540018524693",
     )
     .unwrap();
     let pk = ark_bls12_381::G2Affine::generator() * sk;
-    let cs = BLS12_381SignatureOnG1Signer::new(sk, dst.to_vec());
 
     let msg = "hello";
-    let m_expected = ark_bls12_381::Bls12_381::hash_to_g1_custom::<sha3::Keccak256>(msg.as_ref(), dst);
-    let sig = cs.sign(msg)?;
+    let m = ark_bls12_381::Bls12_381::hash_to_g1_custom::<sha2::Sha256>(msg.as_ref(), dst);
+    let sig = (m * sk).into_affine();
     println!("pk = {};", solidity_repr_g2(pk.into()));
     println!("message = \"{}\";", msg);
-    println!("m_expected = {};", solidity_repr_g1(m_expected.into()));
+    println!("m_expected = {};", solidity_repr_g1(m.into()));
     println!("sig = {};", solidity_repr_g1(sig));
     Ok(())
 }

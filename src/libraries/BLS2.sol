@@ -96,12 +96,12 @@ library BLS2 {
         if (domainLen > 255) {
             revert InvalidDSTLength(DST);
         }
-        bytes memory zpad = new bytes(136);
+        bytes memory zpad = new bytes(64);
         bytes memory b_0 = abi.encodePacked(zpad, message, uint8(0), n_bytes, uint8(0), DST, uint8(domainLen));
-        bytes32 b0 = keccak256(b_0);
+        bytes32 b0 = sha256(b_0);
 
         bytes memory b_i = abi.encodePacked(b0, uint8(1), DST, uint8(domainLen));
-        bytes32 bi = keccak256(b_i);
+        bytes32 bi = sha256(b_i);
         bytes memory out = new bytes(n_bytes);
         uint256 ell = (n_bytes + uint256(31)) >> 5;
         for (uint256 i = 1; i < ell; i++) {
@@ -111,7 +111,7 @@ library BLS2 {
                 p := add(p, mul(32, sub(i, 1)))
                 mstore(p, bi)
             }
-            bi = keccak256(b_i);
+            bi = sha256(b_i);
         }
         assembly {
             let p := add(32, out)
