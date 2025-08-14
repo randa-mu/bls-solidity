@@ -18,20 +18,14 @@ library BLS2 {
     }
 
     struct PointG2 {
-        uint128 x0_hi;
-        uint256 x0_lo;
         uint128 x1_hi;
         uint256 x1_lo;
-        uint128 y0_hi;
-        uint256 y0_lo;
+        uint128 x0_hi;
+        uint256 x0_lo;
         uint128 y1_hi;
         uint256 y1_lo;
-    }
-
-    // GfP2 implements a field of size p² as a quadratic extension of the base field.
-    struct GfP2 {
-        uint256 x;
-        uint256 y;
+        uint128 y0_hi;
+        uint256 y0_lo;
     }
 
     uint128 private constant N_G2_X0_HI = 0x024aa2b2f08f0a91260805272dc51051;
@@ -89,24 +83,24 @@ library BLS2 {
     function g2Unmarshal(bytes memory m) internal pure returns (PointG2 memory) {
         require(m.length == 192, "Invalid G2 bytes length");
 
-        uint128 x0_hi;
-        uint256 x0_lo;
         uint128 x1_hi;
         uint256 x1_lo;
-        uint128 y0_hi;
-        uint256 y0_lo;
+        uint128 x0_hi;
+        uint256 x0_lo;
         uint128 y1_hi;
         uint256 y1_lo;
+        uint128 y0_hi;
+        uint256 y0_lo;
 
         assembly {
-            x0_hi := shr(128, mload(add(m, 0x20)))
-            x0_lo := mload(add(m, 0x30))
-            x1_hi := shr(128, mload(add(m, 0x50)))
-            x1_lo := mload(add(m, 0x60))
-            y0_hi := shr(128, mload(add(m, 0x80)))
-            y0_lo := mload(add(m, 0x90))
-            y1_hi := shr(128, mload(add(m, 0xb0)))
-            y1_lo := mload(add(m, 0xc0))
+            x1_hi := shr(128, mload(add(m, 0x20)))
+            x1_lo := mload(add(m, 0x30))
+            x0_hi := shr(128, mload(add(m, 0x50)))
+            x0_lo := mload(add(m, 0x60))
+            y1_hi := shr(128, mload(add(m, 0x80)))
+            y1_lo := mload(add(m, 0x90))
+            y0_hi := shr(128, mload(add(m, 0xb0)))
+            y0_lo := mload(add(m, 0xc0))
         }
 
         return PointG2(x1_hi, x1_lo, x0_hi, x0_lo, y1_hi, y1_lo, y0_hi, y0_lo);
@@ -114,14 +108,14 @@ library BLS2 {
 
     function g2Marshal(PointG2 memory point) internal pure returns (bytes memory) {
         bytes memory m = new bytes(192);
-        uint256 x0_hi = point.x0_hi;
-        uint256 x0_lo = point.x0_lo;
         uint256 x1_hi = point.x1_hi;
         uint256 x1_lo = point.x1_lo;
-        uint256 y0_hi = point.y0_hi;
-        uint256 y0_lo = point.y0_lo;
+        uint256 x0_hi = point.x0_hi;
+        uint256 x0_lo = point.x0_lo;
         uint256 y1_hi = point.y1_hi;
         uint256 y1_lo = point.y1_lo;
+        uint256 y0_hi = point.y0_hi;
+        uint256 y0_lo = point.y0_lo;
 
         assembly {
             mstore(add(m, 0x20), shl(128, x1_hi))
