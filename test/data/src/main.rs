@@ -11,6 +11,7 @@ use std::path::Path;
 use ark_ec::CurveGroup;
 use std::str::FromStr;
 
+use digest::Digest;
 use digest::{core_api::BlockSizeUser, DynDigest};
 
 use serde::{Deserialize, Serialize};
@@ -89,7 +90,7 @@ fn test_case<H: DynDigest + BlockSizeUser + Default + Clone>(
 
     let tc = TestCase {
         dst: dst.to_string(),
-        message: msg.to_string(),
+        message: hex::encode(msg),
         pk: hex_serialize(&pk),
         m_expected: hex_serialize(&m),
         sig: hex_serialize(&sig),
@@ -105,10 +106,10 @@ fn drand_test_case() -> TestCase {
     let pk = hex_deserialize("83cf0f2896adee7eb8b5f01fcad3912212c437e0073e911fb90022d3e760183c8c4b450b6a0a6c3ac6a5776a2d1064510d1fec758c921cc22b0e17e63aaf4bcb5ed66304de9cf809bd274ca73bab4af5a6e9c76a4bc09e76eae8991ef5ece45a");
     let sig = hex_deserialize("8d2c8bbc37170dbacc5e280a21d4e195cff5f32a19fd6a58633fa4e4670478b5fb39bc13dd8f8c4372c5a76191198ac5");
     let round = 20791007u64;
-    let msg = round.to_be_bytes();
+    let msg = &sha2::Sha256::digest(round.to_be_bytes());
 
     let m = ark_ec::bls12::Bls12::<ark_bls12_381::Config>::hash_to_g1_custom::<sha2::Sha256>(
-        &msg,
+        msg,
         dst.as_bytes(),
     );
 

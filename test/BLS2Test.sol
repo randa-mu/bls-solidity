@@ -59,7 +59,7 @@ contract BLS2Test is Test {
         BLS2.PointG1 memory sig = BLS2.g1Unmarshal(parseHex(tc.sig));
         BLS2.PointG1 memory m_expected = BLS2.g1Unmarshal(parseHex(tc.m_expected));
 
-        BLS2.PointG1 memory m = BLS2.hashToPoint(bytes(tc.dst), bytes(tc.message));
+        BLS2.PointG1 memory m = BLS2.hashToPoint(bytes(tc.dst), parseHex(tc.message));
         console.log("m.x_hi", m.x_hi);
         console.log("m.x_lo", m.x_lo);
         console.log("m.y_hi", m.y_hi);
@@ -84,19 +84,7 @@ contract BLS2Test is Test {
         BLS2.PointG1 memory sig = BLS2.g1Unmarshal(parseHex(tc.sig));
         BLS2.PointG1 memory m_expected = BLS2.g1Unmarshal(parseHex(tc.m_expected));
 
-        BLS2.PointG1 memory m = BLS2.hashToPoint(bytes(tc.dst), bytes(tc.message));
-        console.log("m.x_hi", m.x_hi);
-        console.log("m.x_lo", m.x_lo);
-        console.log("m.y_hi", m.y_hi);
-        console.log("m.y_lo", m.y_lo);
-        console.log("m_expected.x_hi", m_expected.x_hi);
-        console.log("m_expected.x_lo", m_expected.x_lo);
-        console.log("m_expected.y_hi", m_expected.y_hi);
-        console.log("m_expected.y_lo", m_expected.y_lo);
-        assert(m.x_hi == m_expected.x_hi);
-        assert(m.x_lo == m_expected.x_lo);
-        assert(m.y_hi == m_expected.y_hi);
-        assert(m.y_lo == m_expected.y_lo);
+        BLS2.PointG1 memory m = BLS2.hashToPoint(bytes(tc.dst), parseHex(tc.message));
         (bool pairingSuccess, bool callSuccess) = BLS2.verifySingle(sig, pk, m);
         assert(pairingSuccess);
         assert(callSuccess);
