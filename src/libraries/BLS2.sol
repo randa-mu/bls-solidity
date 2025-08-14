@@ -86,6 +86,57 @@ library BLS2 {
         return m;
     }
 
+    function g2Unmarshal(bytes memory m) internal pure returns (PointG2 memory) {
+        require(m.length == 192, "Invalid G2 bytes length");
+
+        uint128 x0_hi;
+        uint256 x0_lo;
+        uint128 x1_hi;
+        uint256 x1_lo;
+        uint128 y0_hi;
+        uint256 y0_lo;
+        uint128 y1_hi;
+        uint256 y1_lo;
+
+        assembly {
+            x0_hi := shr(128, mload(add(m, 0x20)))
+            x0_lo := mload(add(m, 0x30))
+            x1_hi := shr(128, mload(add(m, 0x50)))
+            x1_lo := mload(add(m, 0x60))
+            y0_hi := shr(128, mload(add(m, 0x80)))
+            y0_lo := mload(add(m, 0x90))
+            y1_hi := shr(128, mload(add(m, 0xb0)))
+            y1_lo := mload(add(m, 0xc0))
+        }
+
+        return PointG2(x1_hi, x1_lo, x0_hi, x0_lo, y1_hi, y1_lo, y0_hi, y0_lo);
+    }
+
+    function g2Marshal(PointG2 memory point) internal pure returns (bytes memory) {
+        bytes memory m = new bytes(192);
+        uint256 x0_hi = point.x0_hi;
+        uint256 x0_lo = point.x0_lo;
+        uint256 x1_hi = point.x1_hi;
+        uint256 x1_lo = point.x1_lo;
+        uint256 y0_hi = point.y0_hi;
+        uint256 y0_lo = point.y0_lo;
+        uint256 y1_hi = point.y1_hi;
+        uint256 y1_lo = point.y1_lo;
+
+        assembly {
+            mstore(add(m, 0x20), shl(128, x1_hi))
+            mstore(add(m, 0x30), x1_lo)
+            mstore(add(m, 0x50), shl(128, x0_hi))
+            mstore(add(m, 0x60), x0_lo)
+            mstore(add(m, 0x80), shl(128, y1_hi))
+            mstore(add(m, 0x90), y1_lo)
+            mstore(add(m, 0xb0), shl(128, y0_hi))
+            mstore(add(m, 0xc0), y0_lo)
+        }
+
+        return m;
+    }
+
     // follows RFC9380 §5
     function hashToPoint(bytes memory dst, bytes memory message) internal view returns (PointG1 memory out) {
         bytes memory uniform_bytes = expandMsg(dst, message, 128);
