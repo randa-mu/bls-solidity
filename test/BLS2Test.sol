@@ -2,8 +2,6 @@ pragma solidity ^0.8;
 
 import {Test, console} from "forge-std-1.10.0/src/Test.sol";
 
-// helpers
-import {BLS} from "src/libraries/BLS.sol";
 import {BLS2} from "src/libraries/BLS2.sol";
 
 struct TestCase {

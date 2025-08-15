@@ -1,9 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
-import {Test, console} from "forge-std-1.10.0/src/Test.sol";
-import {ModexpInverse, ModexpSqrt, ModUtils} from "./ModExp.sol";
-
 /// @title  Boneh–Lynn–Shacham (BLS) signature scheme on Barreto-Lynn-Scott 381-bit curve (BLS12-381) used to verify BLS signatures
 /// @notice We use BLS signature aggregation to reduce the size of signature data to store on chain.
 /// @dev We use G1 points for signatures and messages, and G2 points for public keys or vice versa
@@ -38,8 +35,8 @@ library BLS2 {
     uint256 private constant N_G2_Y1_LO = 0x993923066dddaf1040bc3ff59f825c78df74f2d75467e25e0f55f8a00fa030ed;
 
     // Field order
-    uint128 private constant p_hi = 0x1a0111ea397fe69a4b1ba7b6434bacd7;
-    uint256 private constant p_lo = 0x64774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab;
+    uint128 private constant P_HI = 0x1a0111ea397fe69a4b1ba7b6434bacd7;
+    uint256 private constant P_LO = 0x64774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab;
 
     error InvalidDSTLength(bytes dst);
 
@@ -154,9 +151,9 @@ library BLS2 {
                 q := add(q, 64)
                 mstore8(q, 1) // exponent
                 q := add(q, 1)
-                mstore(q, p_hi)
+                mstore(q, P_HI)
                 q := add(q, 32)
-                mstore(q, p_lo)
+                mstore(q, P_LO)
                 ok := staticcall(gas(), 5, add(32, buf), 225, p, 64)
 
                 // EIP-2537 map_fp_to_g1
