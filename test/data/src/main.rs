@@ -24,6 +24,7 @@ struct TestCase {
     pk: String,
     m_expected: String,
     sig: String,
+    sig_compressed: String,
 }
 
 fn generate_sk() -> ark_bls12_381::Fr {
@@ -40,6 +41,12 @@ fn generate_sk() -> ark_bls12_381::Fr {
 fn hex_serialize(p: &impl ark_serialize::CanonicalSerialize) -> String {
     let mut buf = vec![];
     p.serialize_uncompressed(&mut buf).unwrap();
+    hex::encode(buf)
+}
+
+fn hex_serialize_compressed(p: &impl ark_serialize::CanonicalSerialize) -> String {
+    let mut buf = vec![];
+    p.serialize_compressed(&mut buf).unwrap();
     hex::encode(buf)
 }
 
@@ -93,6 +100,7 @@ fn test_case<H: DynDigest + BlockSizeUser + Default + Clone>(
         pk: hex_serialize(&pk),
         m_expected: hex_serialize(&m),
         sig: hex_serialize(&sig),
+        sig_compressed: hex_serialize_compressed(&sig),
     }
 }
 
@@ -121,5 +129,6 @@ fn drand_test_case() -> TestCase {
         pk: hex_serialize(&pk),
         m_expected: hex_serialize(&m),
         sig: hex_serialize(&sig),
+        sig_compressed: hex_serialize_compressed(&sig),
     }
 }
