@@ -18,32 +18,31 @@ struct TestCase {
 }
 
 function readTestCase(string memory path) view returns (TestCase memory) {
-bytes memory data = vm.parseJson(vm.readFile(path));
-return abi.decode(data, (TestCase));
+    bytes memory data = vm.parseJson(vm.readFile(path));
+    return abi.decode(data, (TestCase));
 }
 
-    function parseHex(string memory hexString) pure returns (bytes memory) {
-        bytes memory buf = bytes(hexString);
-        bytes memory result = new bytes(buf.length / 2);
-        string memory alphabet = "0123456789abcdef";
-        for (uint256 i = 0; i < buf.length; i += 2) {
-            result[i / 2] = bytes1(
-                uint8(
-                    vm.indexOf(alphabet, string(abi.encodePacked(buf[i]))) * 16
-                        + vm.indexOf(alphabet, string(abi.encodePacked(buf[i + 1])))
-                )
-            );
-        }
-        return result;
+function parseHex(string memory hexString) pure returns (bytes memory) {
+    bytes memory buf = bytes(hexString);
+    bytes memory result = new bytes(buf.length / 2);
+    string memory alphabet = "0123456789abcdef";
+    for (uint256 i = 0; i < buf.length; i += 2) {
+        result[i / 2] = bytes1(
+            uint8(
+                vm.indexOf(alphabet, string(abi.encodePacked(buf[i]))) * 16
+                    + vm.indexOf(alphabet, string(abi.encodePacked(buf[i + 1])))
+            )
+        );
     }
-
+    return result;
+}
 
 contract BLS2Test is Test {
     function fixture_tc() public view returns (TestCase[] memory testcases) {
-	testcases = new TestCase[](2);
-	testcases[0] = readTestCase("test/data/bls2_g1_sha256.json");
-	testcases[1] = readTestCase("test/data/drand_quicknet.json");
-	// TODO keccak test case
+        testcases = new TestCase[](2);
+        testcases[0] = readTestCase("test/data/bls2_g1_sha256.json");
+        testcases[1] = readTestCase("test/data/drand_quicknet.json");
+        // TODO keccak test case
     }
 
     function table_marshal_unmarshal(TestCase memory tc) public pure {
@@ -65,19 +64,19 @@ contract BLS2Test is Test {
         assert(m.y_hi == m_expected.y_hi);
         assert(m.y_lo == m_expected.y_lo);
         (bool pairingSuccess, bool callSuccess) = BLS2.verifySingle(sig, pk, m);
-	vm.snapshotGasLastCall("BLS2.verifySingle");
+        vm.snapshotGasLastCall("BLS2.verifySingle");
         assert(pairingSuccess);
         assert(callSuccess);
     }
 
     function table_unmarshal_compressed(TestCase memory tc) public {
-	BLS2.PointG1 memory expected = BLS2.g1Unmarshal(parseHex(tc.sig));
+        BLS2.PointG1 memory expected = BLS2.g1Unmarshal(parseHex(tc.sig));
         BLS2.PointG1 memory actual = BLS2.g1UnmarshalCompressed(parseHex(tc.sig_compressed));
-	vm.snapshotGasLastCall("BLS2.g1UnmarshalCompressed");
+        vm.snapshotGasLastCall("BLS2.g1UnmarshalCompressed");
 
-	assert(actual.x_hi == expected.x_hi);
-	assert(actual.x_lo == expected.x_lo);
-	assert(actual.y_hi == expected.y_hi);
-	assert(actual.y_lo == expected.y_lo);
+        assert(actual.x_hi == expected.x_hi);
+        assert(actual.x_lo == expected.x_lo);
+        assert(actual.y_hi == expected.y_hi);
+        assert(actual.y_lo == expected.y_lo);
     }
 }

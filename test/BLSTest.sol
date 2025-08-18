@@ -26,6 +26,6 @@ contract BLSTest is Test {
             "dcipher-randomness-v01-BN254G1_XMD:KECCAK-256_SVDW_RO_0x0000000000000000000000000000000000000000000000000000000000000001";
         BLS.PointG1 memory messageP = BLS.hashToPoint(bytes(dst), bytes(message));
         BLS.verifySingle(sig, pk, messageP);
-	vm.snapshotGasLastCall("BLS.verifySingle");
+        vm.snapshotGasLastCall("BLS.verifySingle");
     }
 }
