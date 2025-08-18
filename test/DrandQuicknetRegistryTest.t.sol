@@ -1,12 +1,12 @@
 pragma solidity ^0.8;
 
-import {Test, console} from "forge-std-1.10.0/src/Test.sol";
+import {Test} from "forge-std-1.10.0/src/Test.sol";
 
-import {TestCase, parseHex, readTestCase} from "test/BLS2Test.sol";
+import {Common} from "test/Common.sol";
 
 import {DrandQuicknetRegistry} from "src/demos/DrandQuicknetRegistry.sol";
 
-contract DrandQuicknetRegistryTest is Test {
+contract DrandQuicknetRegistryTest is Test, Common {
     function test_prove_sample() public {
         DrandQuicknetRegistry registry = new DrandQuicknetRegistry{salt: hex"deadbeef"}();
         TestCase memory tc = readTestCase("test/data/drand_quicknet.json");

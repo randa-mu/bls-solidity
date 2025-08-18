@@ -1,43 +1,12 @@
 pragma solidity ^0.8;
 
-import {Test, console} from "forge-std-1.10.0/src/Test.sol";
-import {Vm} from "forge-std-1.10.0/src/Vm.sol";
+import {Test} from "forge-std-1.10.0/src/Test.sol";
 
 import {BLS2} from "src/libraries/BLS2.sol";
 
-Vm constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
+import {Common} from "test/Common.sol";
 
-struct TestCase {
-    // alphabetical order due to vm.parseJson quirks
-    string dst;
-    string m_expected;
-    string message;
-    string pk;
-    string sig;
-    string sig_compressed;
-}
-
-function readTestCase(string memory path) view returns (TestCase memory) {
-    bytes memory data = vm.parseJson(vm.readFile(path));
-    return abi.decode(data, (TestCase));
-}
-
-function parseHex(string memory hexString) pure returns (bytes memory) {
-    bytes memory buf = bytes(hexString);
-    bytes memory result = new bytes(buf.length / 2);
-    string memory alphabet = "0123456789abcdef";
-    for (uint256 i = 0; i < buf.length; i += 2) {
-        result[i / 2] = bytes1(
-            uint8(
-                vm.indexOf(alphabet, string(abi.encodePacked(buf[i]))) * 16
-                    + vm.indexOf(alphabet, string(abi.encodePacked(buf[i + 1])))
-            )
-        );
-    }
-    return result;
-}
-
-contract BLS2Test is Test {
+contract BLS2Test is Test, Common {
     function fixture_tc() public view returns (TestCase[] memory testcases) {
         testcases = new TestCase[](2);
         testcases[0] = readTestCase("test/data/bls2_g1_sha256.json");

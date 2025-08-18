@@ -6,7 +6,7 @@ evm_version = "prague"
 fs_permissions = [{ access = "read", path = "./"}]
 
 [lint]
-exclude_lints = ["mixed-case-variable"]
+exclude_lints = ["mixed-case-variable", "mixed-case-function"]
 
 [dependencies]
 forge-std = "1.10.0"
