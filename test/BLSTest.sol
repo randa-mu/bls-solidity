@@ -6,7 +6,7 @@ import {Test} from "forge-std-1.10.0/src/Test.sol";
 import {BLS} from "src/libraries/BLS.sol";
 
 contract BLSTest is Test {
-    function test_sample_signature() public view {
+    function test_sample_signature() public {
         BLS.PointG2 memory pk = BLS.PointG2(
             [
                 5838992826193349966357268616665404381433472226083567344457223955089099207810,
@@ -26,5 +26,6 @@ contract BLSTest is Test {
             "dcipher-randomness-v01-BN254G1_XMD:KECCAK-256_SVDW_RO_0x0000000000000000000000000000000000000000000000000000000000000001";
         BLS.PointG1 memory messageP = BLS.hashToPoint(bytes(dst), bytes(message));
         BLS.verifySingle(sig, pk, messageP);
+	vm.snapshotGasLastCall("BLS.verifySingle");
     }
 }
