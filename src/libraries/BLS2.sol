@@ -37,6 +37,11 @@ library BLS2 {
     // Field order
     uint128 private constant P_HI = 0x1a0111ea397fe69a4b1ba7b6434bacd7;
     uint256 private constant P_LO = 0x64774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab;
+    uint128 private constant P_PLUS_ONE_SLASH_2_HI = 0x0680447a8e5ff9a692c6e9ed90d2eb35;
+    uint256 private constant P_PLUS_ONE_SLASH_2_LO = 0xd91dd2e13ce144afd9cc34a83dac3d8907aaffffac54ffffee7fbfffffffeaab;
+
+    // Precompile addresses
+    uint private constant MODEXP_ADDRESS = 5;
 
     error InvalidDSTLength(bytes dst);
 
@@ -55,6 +60,92 @@ library BLS2 {
             y_hi := shr(128, mload(add(m, 0x50)))
             y_lo := mload(add(m, 0x60))
         }
+
+        return PointG1(x_hi, x_lo, y_hi, y_lo);
+    }
+
+    // @notice Unmarshal a G1 point in compressed form.
+    function g1UnmarshalCompressed(bytes memory m) internal view returns (PointG1 memory) {
+        require(m.length == 48, "Invalid G1 bytes length");
+
+        uint128 x_hi;
+        uint256 x_lo;
+        uint128 y_hi;
+        uint256 y_lo;
+
+	bytes memory buf = new bytes(288);
+
+	uint8 flags;
+	bool larger = false;
+
+        assembly {
+            x_hi := shr(128, mload(add(m, 0x20)))
+            x_lo := mload(add(m, 0x30))
+	    flags := byte(16, x_hi)
+	    x_hi := and(x_hi, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+        }
+
+	if (flags & 0x80 == 0) {
+		revert("Invalid G1 point: not compressed");
+	}
+	if (flags & 0x40 != 0) {
+		revert("unsupported: point at infinity");
+	}
+	if (flags & 0x20 == 0) {
+		larger = true;
+	}
+
+	// compute x**3 mod p
+	bool ok;
+	assembly {
+                let p := add(buf, 32)
+                mstore(p, 64) // length of base
+                p := add(p, 32)
+                mstore(p, 1) // length of exponent 3
+                p := add(p, 32)
+                mstore(p, 64) // length of modulus
+                p := add(p, 32)
+		mstore(p, x_hi)
+                p := add(p, 32)
+		mstore(p, x_lo)
+                p := add(p, 32)
+                mstore8(p, 3) // exponent
+                p := add(p, 1)
+                mstore(p, P_HI)
+                p := add(p, 32)
+                mstore(p, P_LO)
+                ok := staticcall(gas(), MODEXP_ADDRESS, add(32, buf), 225, add(32, buf), 64)
+		y_hi := mload(add(buf, 32))
+		y_lo := mload(add(buf, 64))
+	}
+	assert(ok);
+	y_lo += 4; // FIXME can overflow with extremely low probability
+
+	// compute y = sqrt(x**3 + 4) mod p = (x**3 + 4)^(p+1)/2 mod p
+	assembly {
+                let p := add(buf, 32)
+                mstore(p, 64) // length of base
+                p := add(p, 32)
+                mstore(p, 64) // length of exponent
+                p := add(p, 32)
+                mstore(p, 64) // length of modulus
+                p := add(p, 32)
+		mstore(p, y_hi)
+                p := add(p, 32)
+		mstore(p, y_lo)
+                p := add(p, 32)
+                mstore(p, P_PLUS_ONE_SLASH_2_HI)
+		p := add(p, 32)
+		mstore(p, P_PLUS_ONE_SLASH_2_LO)
+		p := add(p, 32)
+                mstore(p, P_HI)
+                p := add(p, 32)
+                mstore(p, P_LO)
+                ok := staticcall(gas(), MODEXP_ADDRESS, add(32, buf), 288, add(32, buf), 64)
+		y_hi := mload(add(buf, 32))
+		y_lo := mload(add(buf, 64))
+	}
+	assert(ok);
 
         return PointG1(x_hi, x_lo, y_hi, y_lo);
     }
@@ -154,7 +245,7 @@ library BLS2 {
                 mstore(q, P_HI)
                 q := add(q, 32)
                 mstore(q, P_LO)
-                ok := staticcall(gas(), 5, add(32, buf), 225, p, 64)
+                ok := staticcall(gas(), MODEXP_ADDRESS, add(32, buf), 225, p, 64)
 
                 // EIP-2537 map_fp_to_g1
                 let r := add(32, buf2)
