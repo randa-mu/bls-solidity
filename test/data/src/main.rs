@@ -51,10 +51,7 @@ fn hex_deserialize<T: ark_serialize::CanonicalDeserialize>(s: &str) -> T {
 fn main() -> anyhow::Result<()> {
     let msg = "hello";
 
-    let sk = ark_bls12_381::Fr::from_str(
-        "19153223051490343243824650241849417450498737914923078729384628564540018524693",
-    )
-    .unwrap();
+    let sk = ark_bls12_381::Fr::new(BigInt::new([0,0,0, 0xdeadbeef]));
 
     test_case::<sha2::Sha256>(
         "BLS12_381G1_XMD:SHA-256_SVDW_RO",
