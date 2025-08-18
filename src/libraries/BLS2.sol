@@ -82,7 +82,7 @@ library BLS2 {
             x_hi := shr(128, mload(add(m, 0x20)))
             x_lo := mload(add(m, 0x30))
 	    flags := byte(16, x_hi)
-	    x_hi := and(x_hi, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+	    x_hi := and(x_hi, 0x1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
         }
 
 	if (flags & 0x80 == 0) {
