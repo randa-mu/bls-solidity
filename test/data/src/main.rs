@@ -4,9 +4,9 @@ use utils::hash_to_curve::CustomPairingHashToCurve;
 use ark_ec::pairing::Pairing;
 use ark_ff::fields::Field;
 use ark_ff::Zero;
+use ark_ff::BigInt;
 use rand::RngCore;
 use std::fs::File;
-use std::path::Path;
 
 use ark_ec::CurveGroup;
 use std::str::FromStr;
@@ -53,20 +53,23 @@ fn main() -> anyhow::Result<()> {
 
     let sk = ark_bls12_381::Fr::new(BigInt::new([0,0,0, 0xdeadbeef]));
 
-    test_case::<sha2::Sha256>(
+
+    serde_json::to_writer_pretty(
+        File::create("bls2_g1_sha256.json")?,
+    &test_case::<sha2::Sha256>(
         "BLS12_381G1_XMD:SHA-256_SVDW_RO",
         msg,
         sk,
-        &Path::new("bls2_g1_sha256.json"),
-    )?;
-    test_case::<sha3::Keccak256>(
+    ))?;
+    serde_json::to_writer_pretty(
+        File::create("bls2_g1_keccak256.json")?,
+    &test_case::<sha3::Keccak256>(
         "BLS12_381G1_XMD:KECCAK-256_SVDW_RO",
         msg,
         sk,
-        &Path::new("bls2_g1_keccak256.json"),
-    )?;
+    ))?;
     serde_json::to_writer_pretty(
-        &mut File::create("drand_quicknet.json")?,
+        File::create("drand_quicknet.json")?,
         &drand_test_case(),
     )?;
     Ok(())
@@ -76,8 +79,7 @@ fn test_case<H: DynDigest + BlockSizeUser + Default + Clone>(
     dst: &str,
     msg: &str,
     sk: ark_bls12_381::Fr,
-    dest: &Path,
-) -> anyhow::Result<()> {
+) -> TestCase {
     let pk = ark_bls12_381::G2Affine::generator() * sk;
     let m = ark_ec::bls12::Bls12::<ark_bls12_381::Config>::hash_to_g1_custom::<H>(
         msg.as_bytes(),
@@ -85,16 +87,13 @@ fn test_case<H: DynDigest + BlockSizeUser + Default + Clone>(
     );
     let sig = (m * sk).into_affine();
 
-    let tc = TestCase {
+    TestCase {
         dst: dst.to_string(),
         message: hex::encode(msg),
         pk: hex_serialize(&pk),
         m_expected: hex_serialize(&m),
         sig: hex_serialize(&sig),
-    };
-
-    serde_json::to_writer_pretty(&mut File::create(dest)?, &tc)?;
-    Ok(())
+    }
 }
 
 fn drand_test_case() -> TestCase {
