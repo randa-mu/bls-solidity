@@ -147,6 +147,23 @@ library BLS2 {
 	}
 	assert(ok);
 
+	uint128 alt_y_hi = P_HI - y_hi;
+uint256 alt_y_lo;
+	unchecked {
+	alt_y_lo = P_LO - y_lo;
+	}
+	if (alt_y_lo > P_LO) {
+		// underflow -> carry
+		alt_y_hi -= 1;
+	}
+
+	bool do_swap = y_hi > alt_y_hi || (y_hi == alt_y_hi && y_lo > alt_y_lo);
+	do_swap = larger == do_swap;
+	if (do_swap) {
+		y_hi = alt_y_hi;
+		y_lo = alt_y_lo;
+	}
+
         return PointG1(x_hi, x_lo, y_hi, y_lo);
     }
 
