@@ -1,8 +1,11 @@
 pragma solidity ^0.8;
 
 import {Test, console} from "forge-std-1.10.0/src/Test.sol";
+import {Vm} from "forge-std-1.10.0/src/Vm.sol";
 
 import {BLS2} from "src/libraries/BLS2.sol";
+
+Vm constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
 
 struct TestCase {
     // alphabetical order due to vm.parseJson quirks
@@ -14,8 +17,12 @@ struct TestCase {
     string sig_compressed;
 }
 
-contract BLS2Test is Test {
-    function parseHex(string memory hexString) internal pure returns (bytes memory) {
+function readTestCase(string memory path) view returns (TestCase memory) {
+bytes memory data = vm.parseJson(vm.readFile(path));
+return abi.decode(data, (TestCase));
+}
+
+    function parseHex(string memory hexString) pure returns (bytes memory) {
         bytes memory buf = bytes(hexString);
         bytes memory result = new bytes(buf.length / 2);
         string memory alphabet = "0123456789abcdef";
@@ -30,15 +37,8 @@ contract BLS2Test is Test {
         return result;
     }
 
-    function eqBytes(bytes memory a, bytes memory b) internal pure returns (bool) {
-        return keccak256(a) == keccak256(b);
-    }
 
-    function readTestCase(string memory path) internal view returns (TestCase memory) {
-        bytes memory data = vm.parseJson(vm.readFile(path));
-        return abi.decode(data, (TestCase));
-    }
-
+contract BLS2Test is Test {
     function fixture_tc() public view returns (TestCase[] memory testcases) {
 	testcases = new TestCase[](2);
 	testcases[0] = readTestCase("test/data/bls2_g1_sha256.json");
@@ -48,10 +48,10 @@ contract BLS2Test is Test {
 
     function table_marshal_unmarshal(TestCase memory tc) public pure {
         bytes memory g1data = parseHex(tc.sig);
-        assert(eqBytes(BLS2.g1Marshal(BLS2.g1Unmarshal(g1data)), g1data));
+        assertEq(BLS2.g1Marshal(BLS2.g1Unmarshal(g1data)), g1data);
 
         bytes memory g2data = parseHex(tc.pk);
-        assert(eqBytes(BLS2.g2Marshal(BLS2.g2Unmarshal(g2data)), g2data));
+        assertEq(BLS2.g2Marshal(BLS2.g2Unmarshal(g2data)), g2data);
     }
 
     function table_verify(TestCase memory tc) public {
