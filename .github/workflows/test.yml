@@ -1,0 +1,49 @@
+name: Foundry
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  pull_request_target:
+
+jobs:
+  check:
+    strategy:
+      fail-fast: true
+
+    name: Foundry project
+    runs-on: ubuntu-latest
+      
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Show Forge version
+        run: |
+          forge --version
+
+      - name: Install Dependencies with Soldeer
+        run: |
+          forge soldeer install
+
+      - name: Run Forge fmt
+        run: |
+          forge fmt --check
+        id: fmt
+
+      - name: Run Forge build
+        run: |
+          forge build --force --skip test --sizes
+        id: build
+
+      - name: Run Forge tests
+        run: |
+          FOUNDRY_PROFILE=test forge test --gas-report
+        id: forge-test
+      
+      - name: Run foundry coverage
+        run: FOUNDRY_PROFILE=coverage forge coverage --report summary
