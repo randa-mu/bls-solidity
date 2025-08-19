@@ -368,33 +368,33 @@ library BLS {
     function g2Unmarshal(bytes memory m) internal pure returns (PointG2 memory) {
         require(m.length == 128, "Invalid G2 bytes length");
 
-        uint256 xx;
-        uint256 xy;
-        uint256 yx;
-        uint256 yy;
+        uint256 x0;
+        uint256 x1;
+        uint256 y0;
+        uint256 y1;
 
         assembly {
-            xx := mload(add(m, 0x20))
-            xy := mload(add(m, 0x40))
-            yx := mload(add(m, 0x60))
-            yy := mload(add(m, 0x80))
+            x0 := mload(add(m, 0x20))
+            x1 := mload(add(m, 0x40))
+            y0 := mload(add(m, 0x60))
+            y1 := mload(add(m, 0x80))
         }
 
-        return PointG2([xx, xy], [yx, yy]);
+        return PointG2([x1, x0], [y1, y0]);
     }
 
     function g2Marshal(PointG2 memory point) internal pure returns (bytes memory) {
         bytes memory m = new bytes(128);
-        bytes32 xx = bytes32(point.x[0]);
-        bytes32 xy = bytes32(point.x[1]);
-        bytes32 yx = bytes32(point.y[0]);
-        bytes32 yy = bytes32(point.y[1]);
+        bytes32 x0 = bytes32(point.x[0]);
+        bytes32 x1 = bytes32(point.x[1]);
+        bytes32 y0 = bytes32(point.y[0]);
+        bytes32 y1 = bytes32(point.y[1]);
 
         assembly {
-            mstore(add(m, 0x20), xx)
-            mstore(add(m, 0x40), xy)
-            mstore(add(m, 0x60), yx)
-            mstore(add(m, 0x80), yy)
+            mstore(add(m, 0x20), x0)
+            mstore(add(m, 0x40), x1)
+            mstore(add(m, 0x60), y0)
+            mstore(add(m, 0x80), y1)
         }
 
         return m;

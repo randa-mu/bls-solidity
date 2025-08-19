@@ -7,14 +7,10 @@ import {BLS2} from "src/libraries/BLS2.sol";
 import {Common} from "test/Common.sol";
 
 contract BLS2Test is Test, Common {
-    function fixture_tc() public view returns (TestCase[] memory testcases) {
-        testcases = new TestCase[](2);
-        testcases[0] = readTestCase("test/data/bls2_g1_sha256.json");
-        testcases[1] = readTestCase("test/data/drand_quicknet.json");
-        // TODO keccak test case
-    }
-
     function table_marshal_unmarshal(TestCase memory tc) public pure {
+        if (!eq(tc.scheme, "BLS12381")) {
+            return; // Skip row but not whole table
+        }
         bytes memory g1data = parseHex(tc.sig);
         assertEq(BLS2.g1Marshal(BLS2.g1Unmarshal(g1data)), g1data);
 
@@ -23,6 +19,9 @@ contract BLS2Test is Test, Common {
     }
 
     function table_verify(TestCase memory tc) public {
+        if (!eq(tc.scheme, "BLS12381")) {
+            return; // Skip row but not whole table
+        }
         BLS2.PointG2 memory pk = BLS2.g2Unmarshal(parseHex(tc.pk));
         BLS2.PointG1 memory sig = BLS2.g1Unmarshal(parseHex(tc.sig));
         BLS2.PointG1 memory m_expected = BLS2.g1Unmarshal(parseHex(tc.m_expected));
@@ -39,6 +38,10 @@ contract BLS2Test is Test, Common {
     }
 
     function table_unmarshal_compressed(TestCase memory tc) public {
+        if (!eq(tc.scheme, "BLS12381")) {
+            return; // Skip row but not whole table
+        }
+
         BLS2.PointG1 memory expected = BLS2.g1Unmarshal(parseHex(tc.sig));
         BLS2.PointG1 memory actual = BLS2.g1UnmarshalCompressed(parseHex(tc.sig_compressed));
         vm.snapshotGasLastCall("BLS2.g1UnmarshalCompressed");

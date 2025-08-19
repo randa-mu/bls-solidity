@@ -2,10 +2,11 @@ pragma solidity ^0.8;
 
 import {Test} from "forge-std-1.10.0/src/Test.sol";
 
-// helpers
 import {BLS} from "src/libraries/BLS.sol";
 
-contract BLSTest is Test {
+import {Common} from "test/Common.sol";
+
+contract BLSTest is Test, Common {
     function test_sample_signature() public {
         BLS.PointG2 memory pk = BLS.PointG2(
             [
@@ -27,5 +28,22 @@ contract BLSTest is Test {
         BLS.PointG1 memory messageP = BLS.hashToPoint(bytes(dst), bytes(message));
         BLS.verifySingle(sig, pk, messageP);
         vm.snapshotGasLastCall("BLS.verifySingle");
+    }
+
+    function table_verify(TestCase memory tc) public {
+        if (!eq(tc.scheme, "BN254")) {
+            return; // Skip row but not whole table
+        }
+        BLS.PointG2 memory pk = BLS.g2Unmarshal(parseHex(tc.pk));
+        BLS.PointG1 memory sig = BLS.g1Unmarshal(parseHex(tc.sig));
+        BLS.PointG1 memory m_expected = BLS.g1Unmarshal(parseHex(tc.m_expected));
+
+        BLS.PointG1 memory m = BLS.hashToPoint(bytes(tc.dst), parseHex(tc.message));
+        assert(m.x == m_expected.x);
+        assert(m.y == m_expected.y);
+        (bool pairingSuccess, bool callSuccess) = BLS.verifySingle(sig, pk, m);
+        vm.snapshotGasLastCall("BLS.verifySingle");
+        assert(pairingSuccess);
+        assert(callSuccess);
     }
 }

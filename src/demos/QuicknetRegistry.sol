@@ -3,7 +3,7 @@ pragma solidity ^0.8;
 
 import {BLS2} from "src/libraries/BLS2.sol";
 
-contract DrandQuicknetRegistry {
+contract QuicknetRegistry {
     mapping(uint64 => bytes32) public roundRandomness;
 
     string public constant DST = "BLS_SIG_BLS12381G1_XMD:SHA-256_SSWU_RO_NUL_";
