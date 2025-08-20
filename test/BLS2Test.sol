@@ -31,8 +31,8 @@ contract BLS2Test is Test, Common {
         assert(m.x_lo == m_expected.x_lo);
         assert(m.y_hi == m_expected.y_hi);
         assert(m.y_lo == m_expected.y_lo);
+
         (bool pairingSuccess, bool callSuccess) = BLS2.verifySingle(sig, pk, m);
-        vm.snapshotGasLastCall("BLS2.verifySingle");
         assert(pairingSuccess);
         assert(callSuccess);
     }
@@ -44,7 +44,6 @@ contract BLS2Test is Test, Common {
 
         BLS2.PointG1 memory expected = BLS2.g1Unmarshal(parseHex(tc.sig));
         BLS2.PointG1 memory actual = BLS2.g1UnmarshalCompressed(parseHex(tc.sig_compressed));
-        vm.snapshotGasLastCall("BLS2.g1UnmarshalCompressed");
 
         assert(actual.x_hi == expected.x_hi);
         assert(actual.x_lo == expected.x_lo);

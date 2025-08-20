@@ -27,7 +27,6 @@ contract BLSTest is Test, Common {
             "dcipher-randomness-v01-BN254G1_XMD:KECCAK-256_SVDW_RO_0x0000000000000000000000000000000000000000000000000000000000000001";
         BLS.PointG1 memory messageP = BLS.hashToPoint(bytes(dst), bytes(message));
         BLS.verifySingle(sig, pk, messageP);
-        vm.snapshotGasLastCall("BLS.verifySingle");
     }
 
     function table_verify(TestCase memory tc) public {
@@ -41,8 +40,8 @@ contract BLSTest is Test, Common {
         BLS.PointG1 memory m = BLS.hashToPoint(bytes(tc.dst), parseHex(tc.message));
         assert(m.x == m_expected.x);
         assert(m.y == m_expected.y);
+
         (bool pairingSuccess, bool callSuccess) = BLS.verifySingle(sig, pk, m);
-        vm.snapshotGasLastCall("BLS.verifySingle");
         assert(pairingSuccess);
         assert(callSuccess);
     }
