@@ -119,7 +119,13 @@ library BLS2 {
             y_lo := mload(add(buf, 64))
         }
         assert(ok);
-        y_lo += 4; // FIXME can overflow with extremely low probability
+        unchecked {
+            y_lo += 4;
+        }
+        if (y_lo < 4) {
+            // overflow -> carry
+            y_hi += 1;
+        }
 
         // compute y = sqrt(x**3 + 4) mod p = (x**3 + 4)^(p+1)/2 mod p
         assembly {
