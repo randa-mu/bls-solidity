@@ -9,9 +9,9 @@ ark-bn254 = "0.4.0"
 ark-bls12-381 = "0.4.0"
 ark-ec = "0.4.2"
 ark-ff = "0.4.2"
-utils = { git = "https://github.com/randa-mu/dcipher", version = "0.1.0" }
-dcipher-signer = { git = "https://github.com/randa-mu/dcipher", version = "0.1.0" }
-dcipher-agents = { git = "https://github.com/randa-mu/dcipher", version = "0.1.0", features = ["evm"] }
+utils = { git = "https://github.com/randa-mu/dcipher", version = "0.1.0", branch = "feat/randomness-bls12_381" }
+dcipher-signer = { git = "https://github.com/randa-mu/dcipher", version = "0.1.0", branch = "feat/randomness-bls12_381" }
+dcipher-agents = { git = "https://github.com/randa-mu/dcipher", version = "0.1.0", branch = "feat/randomness-bls12_381", features = ["evm"] }
 
 digest = "0.10"
 sha2 = "0.10.9"

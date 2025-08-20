@@ -2,7 +2,7 @@ use ark_ec::AffineRepr;
 use utils::hash_to_curve::CustomPairingHashToCurve;
 
 use ark_ec::pairing::Pairing;
-use ark_ff::{BigInteger, PrimeField, Zero};
+use ark_ff::{PrimeField, Zero};
 use ark_ff::BigInt;
 use std::fs::File;
 use ark_bn254::Bn254;
@@ -33,12 +33,6 @@ struct TestCase {
 fn hex_serialize(p: &impl ark_serialize::CanonicalSerialize) -> String {
     let mut buf = vec![];
     p.serialize_uncompressed(&mut buf).unwrap();
-    hex::encode(buf)
-}
-
-fn hex_serialize_compressed(p: &impl ark_serialize::CanonicalSerialize) -> String {
-    let mut buf = vec![];
-    p.serialize_compressed(&mut buf).unwrap();
     hex::encode(buf)
 }
 
@@ -101,21 +95,10 @@ fn test_case<H: DynDigest + BlockSizeUser + Default + Clone>(
         pk: hex_serialize(&pk),
         m_expected: hex_serialize(&m),
         sig: hex_serialize(&sig),
-        sig_compressed: hex_serialize_compressed(&sig),
+        sig_compressed: hex::encode(sig.ser_bytes()),
         drand_round_number: 0
     }
 }
-
-fn bn254_g2_ser_bytes(p: ark_bn254::G2Affine) -> Vec<u8> {
-        let (x, y) = match p.xy() {
-            Some((x, y)) => (x, y),
-            None => (&Zero::zero(), &Zero::zero()),
-        };
-
-        [x.c1, x.c0, y.c1, y.c0].map(|v| v.into_bigint().to_bytes_be())
-            .concat()
-            .into()
-    }
 
 fn bn254_g2_deser(bytes: Vec<u8>) -> ark_bn254::G2Affine {
     use ark_bn254::{Fq, Fq2};
@@ -159,10 +142,10 @@ fn test_case_bn254<H: DynDigest + BlockSizeUser + Default + Clone>(
         dst: dst.to_string(),
         scheme: "BN254".to_string(),
         message: hex::encode(msg),
-        pk: hex::encode(bn254_g2_ser_bytes(pk)),
+        pk: hex::encode(pk.ser_bytes()),
         m_expected: hex::encode(m.ser_bytes()),
         sig: hex::encode(sig.ser_bytes()),
-        sig_compressed: hex_serialize_compressed(&sig),
+        sig_compressed: "".to_owned(),
         drand_round_number: 0
     }
 }
@@ -193,7 +176,7 @@ fn drand_test_case(sig: &str, round: u64) -> TestCase {
         pk: hex_serialize(&pk),
         m_expected: hex_serialize(&m),
         sig: hex_serialize(&sig),
-        sig_compressed: hex_serialize_compressed(&sig),
+        sig_compressed: hex::encode(sig.into_affine().ser_bytes()),
         drand_round_number: round,
     }
 }
@@ -220,10 +203,10 @@ fn evmnet_test_case(sig: &str, round: u64) -> TestCase {
         dst: dst.to_string(),
         scheme: "BN254".to_string(),
         message: hex::encode(msg),
-        pk: hex::encode(bn254_g2_ser_bytes(pk)),
+        pk: hex::encode(pk.ser_bytes()),
         m_expected: hex::encode(m.into_affine().ser_bytes()),
         sig: hex::encode(sig.ser_bytes()),
-        sig_compressed: hex_serialize_compressed(&sig),
+        sig_compressed: "".to_owned(),
         drand_round_number: round,
     }
 }

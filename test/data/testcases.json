@@ -16,7 +16,7 @@
     "m_expected": "217bb696786f9adc329b5edda4744e1c9014edf39051396cbcadc4446c7f7a5f12bd6a29328a3050346a5129b08d642b64af8b2055c777f53f5359af846770d5",
     "scheme": "BN254",
     "sig": "242693761d12d697c57a762d3a881c5c2dd75f7a329ecbe40a290aba7a75c61021d0986bb6f54c943d07b8b3c627285c0ba596a201ceccd0611a5ce3f3fee3a6",
-    "sig_compressed": "10c6757aba0a290ae4cb9e327a5fd72d5c1c883a2d767ac597d6121d769326a4",
+    "sig_compressed": "",
     "drand_round_number": 0
   },
   {
@@ -46,7 +46,7 @@
     "m_expected": "1626082c3dd0751bdaaf8c3e709b5dd7cdedf45d4e81a5aa3e270f1e78924b322bf29ab3af54dfe3c053ad4efa93db05d3586368463e9d7334c7ba61f6f4e955",
     "scheme": "BN254",
     "sig": "01d65d6128f4b2df3d08de85543d8efe06b0281d0770246ae3672e8ddd3efda0269373123458f0b5c0073eeed1c816a06809e127421513e34ee07df6987910b3",
-    "sig_compressed": "a0fd3edd8d2e67e36a2470071d28b006fe8e3d5485de083ddfb2f428615dd681",
+    "sig_compressed": "",
     "drand_round_number": 9337227
   }
 ]
