@@ -45,4 +45,19 @@ contract BLSTest is Test, Common {
         assert(pairingSuccess);
         assert(callSuccess);
     }
+
+    function test_snapshot_verify_uncompressed() public {
+        // snapshots do not work well in table tests as of Foundry 1.3.1, workaround here.
+        TestCase memory tc = fixture_tc()[4];
+        BLS.PointG2 memory pk = BLS.g2Unmarshal(parseHex(tc.pk));
+        bytes memory sigBytes = parseHex(tc.sig);
+        bytes memory msg = parseHex(tc.message);
+
+        vm.startSnapshotGas("BLS", "verify_uncompressed");
+        BLS.PointG1 memory sig = BLS.g1Unmarshal(sigBytes);
+        BLS.PointG1 memory m = BLS.hashToPoint(bytes(tc.dst), msg);
+        (bool pairingSuccess, bool callSuccess) = BLS.verifySingle(sig, pk, m);
+        vm.stopSnapshotGas();
+        assert(pairingSuccess && callSuccess);
+    }
 }
