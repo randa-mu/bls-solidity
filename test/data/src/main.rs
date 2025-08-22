@@ -7,7 +7,7 @@ use ark_ff::BigInt;
 use std::fs::File;
 use ark_bn254::Bn254;
 
-use dcipher_signer::{BN254SignatureOnG1Signer, BlsSigner, BlsVerifier};
+use dcipher_signer::bls::{BlsPairingSigner, BlsSigner, BlsVerifier};
 
 use ark_ec::CurveGroup;
 use dcipher_agents::ser::EvmSerialize;
@@ -129,14 +129,14 @@ fn test_case_bn254<H: DynDigest + BlockSizeUser + Default + Clone>(
     sk: ark_bn254::Fr,
 ) -> TestCase {
     let pk = (ark_bn254::G2Affine::generator() * sk).into_affine();
-    let signer = BN254SignatureOnG1Signer::new(sk, dst.bytes().collect());
+    let signer = BlsPairingSigner::new_bn254(sk);
     let m = Bn254::hash_to_g1_custom::<H>(
         msg.as_bytes(),
         dst.as_bytes(),
     ).into_affine();
-    let sig = signer.sign(&msg).unwrap();
+    let sig = signer.sign_g1::<H>(&msg, &dst).unwrap();
 
-    assert!(signer.verify(&msg, sig, pk));
+    assert!(signer.verify_g1::<H>(&msg, &dst, sig, pk));
 
     TestCase {
         dst: dst.to_string(),
