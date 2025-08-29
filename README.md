@@ -9,6 +9,7 @@
 This repository contains Solidity libraries for verifying BLS and threshold BLS signatures.
 It supports the BN254 curve, as well as the BLS12-381 curve provided the EIP-2537 precompiles are available.
 Point compression is also supported on BLS12-381 G1.
+The serialization formats match those used by drand and dcipher.
 
 ## Structure
 
