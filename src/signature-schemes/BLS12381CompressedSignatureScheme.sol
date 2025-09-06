@@ -39,22 +39,15 @@ contract BLS12381CompressedSignatureScheme is ISignatureScheme {
     /// @notice Verifies a signature using the given signature scheme.
     /// @param message The message that was signed. Message is a G1 point represented as bytes.
     /// @param signature The signature to verify. Signature is a G1 point represented as bytes.
-    /// @param publicKey The public key of the signer. Public key is a G2 point represented as bytes.
     /// @return isValid boolean which evaluates to true if the signature is valid, false otherwise.
-    function verifySignature(bytes calldata message, bytes calldata signature, bytes calldata publicKey)
-        external
-        view
-        returns (bool isValid)
-    {
+    function verifySignature(bytes calldata message, bytes calldata signature) external view returns (bool isValid) {
         /// @dev Converts message hash bytes to G1 point
         BLS2.PointG1 memory _message = BLS2.g1Unmarshal(message);
         /// @dev Converts signature bytes to G1 point
         BLS2.PointG1 memory _signature = BLS2.g1UnmarshalCompressed(signature);
-        /// @dev Converts public key bytes to G2 point
-        BLS2.PointG2 memory _publicKey = BLS2.g2Unmarshal(publicKey);
 
         /// @dev Calls EVM precompile for pairing check
-        (bool pairingSuccess, bool callSuccess) = BLS2.verifySingle(_signature, _publicKey, _message);
+        (bool pairingSuccess, bool callSuccess) = BLS2.verifySingle(_signature, publicKey, _message);
         return pairingSuccess && callSuccess;
     }
 
