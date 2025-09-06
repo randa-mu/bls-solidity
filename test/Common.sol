@@ -7,6 +7,7 @@ abstract contract Common is TestBase {
     // It provides utility functions to read test cases and parse hex strings.
     struct TestCase {
         // alphabetical order due to vm.parseJson quirks
+        string application;
         uint64 drand_round_number; // Optional: 0 if n/a
         string dst;
         string m_expected;

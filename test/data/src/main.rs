@@ -24,6 +24,7 @@ struct TestCase {
     sig: String,
     sig_compressed: String,
     drand_round_number: u64, // Optional: 0 if n/a
+    application: String,
 }
 
 fn hex_serialize(p: &impl ark_serialize::CanonicalSerialize) -> String {
@@ -107,6 +108,7 @@ fn test_case_bls12_381(dst: &str, msg: &str, sk: ark_bls12_381::Fr) -> TestCase 
         sig: hex_serialize(&s),
         sig_compressed: hex::encode(s.ser_bytes()),
         drand_round_number: 0,
+        application: "".to_owned(),
     }
 }
 
@@ -127,6 +129,7 @@ fn test_case_bn254(dst: &str, msg: &str, sk: ark_bn254::Fr) -> TestCase {
         sig: hex::encode(s.ser_bytes()),
         sig_compressed: "not applicable".to_owned(),
         drand_round_number: 0,
+        application: "".to_owned(),
     }
 }
 
@@ -152,6 +155,7 @@ fn quicknet_test_case(sig: &str, round: u64) -> TestCase {
         sig: hex_serialize(&s),
         sig_compressed: sig.to_owned(),
         drand_round_number: round,
+        application: "".to_owned(),
     }
 }
 
@@ -175,5 +179,6 @@ fn evmnet_test_case(sig: &str, round: u64) -> TestCase {
         sig: sig.to_owned(),
         sig_compressed: "not applicable".to_owned(),
         drand_round_number: round,
+        application: "".to_owned(),
     }
 }

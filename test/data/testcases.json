@@ -7,7 +7,8 @@
     "scheme": "BLS12381",
     "sig": "096801cb6c6da567d2da8aa0fdbd9487d616c269b6cf053c16e9f1d8864bd03a0ee545621089ec5490e71c71427d026c16c35a39472bf4b11ecaf1ad65539f64bd21362fb126046059f52f127282a453a68a82519c81a0d13b2837385061ec14",
     "sig_compressed": "a96801cb6c6da567d2da8aa0fdbd9487d616c269b6cf053c16e9f1d8864bd03a0ee545621089ec5490e71c71427d026c",
-    "drand_round_number": 0
+    "drand_round_number": 0,
+    "application": ""
   },
   {
     "dst": "BN254G1_XMD:KECCAK-256_SSWU_RO",
@@ -17,7 +18,8 @@
     "scheme": "BN254",
     "sig": "242693761d12d697c57a762d3a881c5c2dd75f7a329ecbe40a290aba7a75c61021d0986bb6f54c943d07b8b3c627285c0ba596a201ceccd0611a5ce3f3fee3a6",
     "sig_compressed": "not applicable",
-    "drand_round_number": 0
+    "drand_round_number": 0,
+    "application": ""
   },
   {
     "dst": "BLS_SIG_BLS12381G1_XMD:SHA-256_SSWU_RO_NUL_",
@@ -27,7 +29,8 @@
     "scheme": "BLS12381",
     "sig": "0d2c8bbc37170dbacc5e280a21d4e195cff5f32a19fd6a58633fa4e4670478b5fb39bc13dd8f8c4372c5a76191198ac50823ff37364b4060af65c7ec4dde05a428e4a444713680d95c34a4b109f112af1792643c742b75d85940c4bdcfdfbfa1",
     "sig_compressed": "8d2c8bbc37170dbacc5e280a21d4e195cff5f32a19fd6a58633fa4e4670478b5fb39bc13dd8f8c4372c5a76191198ac5",
-    "drand_round_number": 20791007
+    "drand_round_number": 20791007,
+    "application": ""
   },
   {
     "dst": "BLS_SIG_BLS12381G1_XMD:SHA-256_SSWU_RO_NUL_",
@@ -37,7 +40,8 @@
     "scheme": "BLS12381",
     "sig": "0a60486975062d9f06633c284cf1a7b46fb343f56f329f180530ca40a9e86320244f4fbfc37ae866cf25ef499665a31f08c61b5471ed86344d6b347d1b0e1a4146877a57c28507448678d8249521d91be74cd5a44fb6fce5f869b235e085ebe6",
     "sig_compressed": "8a60486975062d9f06633c284cf1a7b46fb343f56f329f180530ca40a9e86320244f4fbfc37ae866cf25ef499665a31f",
-    "drand_round_number": 20905307
+    "drand_round_number": 20905307,
+    "application": ""
   },
   {
     "dst": "BLS_SIG_BN254G1_XMD:KECCAK-256_SVDW_RO_NUL_",
@@ -47,6 +51,7 @@
     "scheme": "BN254",
     "sig": "01d65d6128f4b2df3d08de85543d8efe06b0281d0770246ae3672e8ddd3efda0269373123458f0b5c0073eeed1c816a06809e127421513e34ee07df6987910b3",
     "sig_compressed": "not applicable",
-    "drand_round_number": 9337227
+    "drand_round_number": 9337227,
+    "application": ""
   }
 ]
