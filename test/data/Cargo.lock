@@ -362,7 +362,7 @@ dependencies = [
  "either",
  "futures",
  "futures-utils-wasm",
- "lru 0.13.0",
+ "lru",
  "parking_lot",
  "pin-project",
  "reqwest",
@@ -1347,54 +1347,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "dcipher-network"
-version = "0.1.0"
-source = "git+https://github.com/randa-mu/dcipher?branch=feat%2Frandomness-bls12_381#84eac6a773f1b9c324a218bee3734a05bcd01d6b"
-dependencies = [
- "async-trait",
- "futures",
- "futures-util",
- "itertools 0.14.0",
- "prost",
- "serde",
- "thiserror 2.0.16",
- "tokio",
- "tokio-stream",
- "tokio-util",
- "tracing",
-]
-
-[[package]]
-name = "dcipher-signer"
-version = "0.1.0"
-source = "git+https://github.com/randa-mu/dcipher?branch=feat%2Frandomness-bls12_381#84eac6a773f1b9c324a218bee3734a05bcd01d6b"
-dependencies = [
- "ark-bn254",
- "ark-ec",
- "ark-ff 0.4.2",
- "ark-std 0.4.0",
- "bytes",
- "dcipher-network",
- "digest 0.10.7",
- "either",
- "futures-util",
- "itertools 0.14.0",
- "lru 0.14.0",
- "prometheus",
- "prost",
- "serde",
- "serde_cbor",
- "serde_with",
- "sha3",
- "strum",
- "thiserror 2.0.16",
- "tokio",
- "tokio-util",
- "tracing",
- "utils",
-]
-
-[[package]]
 name = "der"
 version = "0.7.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1799,12 +1751,6 @@ dependencies = [
  "rand_core 0.6.4",
  "subtle",
 ]
-
-[[package]]
-name = "half"
-version = "1.8.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1b43ede17f21864e81be2fa654110bf1e793774238d86ef8555c37e6519c0403"
 
 [[package]]
 name = "hashbrown"
@@ -2308,15 +2254,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "lru"
-version = "0.14.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9f8cc7106155f10bdf99a6f379688f543ad6596a415375b36a59a054ceda1198"
-dependencies = [
- "hashbrown 0.15.5",
-]
-
-[[package]]
 name = "macro-string"
 version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2338,7 +2275,6 @@ dependencies = [
  "ark-ff 0.4.2",
  "ark-serialize 0.4.2",
  "dcipher-agents",
- "dcipher-signer",
  "digest 0.10.7",
  "hex",
  "serde",
@@ -2770,29 +2706,6 @@ dependencies = [
  "rusty-fork",
  "tempfile",
  "unarray",
-]
-
-[[package]]
-name = "prost"
-version = "0.13.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2796faa41db3ec313a31f7624d9286acf277b52de526150b7e69f3debf891ee5"
-dependencies = [
- "bytes",
- "prost-derive",
-]
-
-[[package]]
-name = "prost-derive"
-version = "0.13.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8a56d757972c98b346a9b766e3f02746cde6dd1cd1d1d563472929fdd74bec4d"
-dependencies = [
- "anyhow",
- "itertools 0.14.0",
- "proc-macro2",
- "quote",
- "syn 2.0.106",
 ]
 
 [[package]]
@@ -3352,16 +3265,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5f0e2c6ed6606019b4e29e69dbaba95b11854410e5347d525002456dbbb786b6"
 dependencies = [
  "serde_derive",
-]
-
-[[package]]
-name = "serde_cbor"
-version = "0.11.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2bef2ebfde456fb76bbcf9f59315333decc4fda0b2b44b420243c11e0f5ec1f5"
-dependencies = [
- "half",
- "serde",
 ]
 
 [[package]]
@@ -4048,7 +3951,6 @@ dependencies = [
  "serde",
  "serde_with",
  "sha2",
- "sha3",
  "thiserror 1.0.69",
 ]
 

@@ -29,6 +29,17 @@ contract BLSTest is Test, Common {
         BLS.verifySingle(sig, pk, messageP);
     }
 
+    function table_marshal_unmarshal(TestCase memory tc) public pure {
+        if (!eq(tc.scheme, "BN254")) {
+            return; // Skip row but not whole table
+        }
+        bytes memory g1data = parseHex(tc.sig);
+        assertEq(BLS.g1Marshal(BLS.g1Unmarshal(g1data)), g1data);
+
+        bytes memory g2data = parseHex(tc.pk);
+        assertEq(BLS.g2Marshal(BLS.g2Unmarshal(g2data)), g2data);
+    }
+
     function table_verify(TestCase memory tc) public {
         if (!eq(tc.scheme, "BN254")) {
             return; // Skip row but not whole table

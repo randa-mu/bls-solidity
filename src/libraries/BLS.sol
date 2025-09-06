@@ -336,6 +336,8 @@ library BLS {
     }
 
     /// @notice Unmarshals a point on G1 from bytes in an uncompressed form.
+    /// @param m Representation of the point, using 32-byte big-endian integers for x, then y.
+    /// @return A G1 point.
     function g1Unmarshal(bytes memory m) internal pure returns (PointG1 memory) {
         require(m.length == 64, "Invalid G1 bytes length");
 
@@ -351,6 +353,8 @@ library BLS {
     }
 
     /// @notice Marshals a point on G1 to bytes form.
+    /// @param point A G1 point.
+    /// @return 64 bytes containing the representation of the point, using 32-byte big-endian integers for x, then y.
     function g1Marshal(PointG1 memory point) internal pure returns (bytes memory) {
         bytes memory m = new bytes(64);
         bytes32 x = bytes32(point.x);
@@ -365,24 +369,29 @@ library BLS {
     }
 
     /// @dev Unmarshals a point on G2 from bytes in an uncompressed form.
+    /// @param m Representation of the point, starting with the coefficient of the term of degree 1 of x as a 32-byte big-endian integer, then the coefficient of degree 0 of x, then the same for y.
+    /// @return A G2 point.
     function g2Unmarshal(bytes memory m) internal pure returns (PointG2 memory) {
         require(m.length == 128, "Invalid G2 bytes length");
 
-        uint256 x0;
         uint256 x1;
-        uint256 y0;
+        uint256 x0;
         uint256 y1;
+        uint256 y0;
 
         assembly {
-            x0 := mload(add(m, 0x20))
-            x1 := mload(add(m, 0x40))
-            y0 := mload(add(m, 0x60))
-            y1 := mload(add(m, 0x80))
+            x1 := mload(add(m, 0x20))
+            x0 := mload(add(m, 0x40))
+            y1 := mload(add(m, 0x60))
+            y0 := mload(add(m, 0x80))
         }
 
-        return PointG2([x1, x0], [y1, y0]);
+        return PointG2([x0, x1], [y0, y1]);
     }
 
+    /// @dev Marshals a point on G2 to an uncompressed form.
+    /// @param point A G2 point.
+    /// @return 128 bytes containing the representation of the point, starting with the coefficient of the term of degree 1 of x as a 32-byte big-endian integer, then the coefficient of degree 0 of x, then the same for y.
     function g2Marshal(PointG2 memory point) internal pure returns (bytes memory) {
         bytes memory m = new bytes(128);
         bytes32 x0 = bytes32(point.x[0]);
@@ -391,10 +400,10 @@ library BLS {
         bytes32 y1 = bytes32(point.y[1]);
 
         assembly {
-            mstore(add(m, 0x20), x0)
-            mstore(add(m, 0x40), x1)
-            mstore(add(m, 0x60), y0)
-            mstore(add(m, 0x80), y1)
+            mstore(add(m, 0x20), x1)
+            mstore(add(m, 0x40), x0)
+            mstore(add(m, 0x60), y1)
+            mstore(add(m, 0x80), y0)
         }
 
         return m;
