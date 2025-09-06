@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
+import "./Precompiles.sol";
+
 /// @title  Boneh–Lynn–Shacham (BLS) signature scheme on Barreto-Lynn-Scott 381-bit curve (BLS12-381) used to verify BLS signatures
 /// @notice We use BLS signature aggregation to reduce the size of signature data to store on chain.
 /// @dev We use G1 points for signatures and messages, and G2 points for public keys or vice versa
@@ -39,9 +41,6 @@ library BLS2 {
     uint256 private constant P_LO = 0x64774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab;
     uint128 private constant P_PLUS_ONE_SLASH_2_HI = 0x0680447a8e5ff9a692c6e9ed90d2eb35;
     uint256 private constant P_PLUS_ONE_SLASH_2_LO = 0xd91dd2e13ce144afd9cc34a83dac3d8907aaffffac54ffffee7fbfffffffeaab;
-
-    // Precompile addresses
-    uint256 private constant MODEXP_ADDRESS = 5;
 
     error InvalidDSTLength(bytes dst);
 
@@ -273,12 +272,12 @@ library BLS2 {
                 // EIP-2537 map_fp_to_g1
                 let r := add(32, buf2)
                 r := add(r, mul(128, i))
-                ok := and(ok, staticcall(gas(), 16, p, 64, r, 128))
+                ok := and(ok, staticcall(gas(), BLS12_MAP_FP_TO_G1, p, 64, r, 128))
             }
             require(ok);
         }
         assembly {
-            ok := staticcall(gas(), 0x0b, add(buf2, 32), 256, out, 128)
+            ok := staticcall(gas(), BLS12_G1ADD, add(buf2, 32), 256, out, 128)
         }
         require(ok, "g1add failed");
     }
@@ -357,7 +356,7 @@ library BLS2 {
         ];
         uint256[1] memory out;
         assembly {
-            callSuccess := staticcall(sub(gas(), 2000), 0xf, input, 768, out, 0x20)
+            callSuccess := staticcall(gas(), BLS12_PAIRING_CHECK, input, 768, out, 0x20)
         }
         return (out[0] != 0, callSuccess);
     }

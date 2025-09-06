@@ -3,6 +3,8 @@ pragma solidity ^0.8;
 
 import {ModexpInverse, ModexpSqrt} from "./ModExp.sol";
 
+import "./Precompiles.sol";
+
 /// @title  Boneh–Lynn–Shacham (BLS) signature scheme on Barreto-Naehrig 254 bit curve (BN-254) used to verify BLS signaturess on the BN254 curve in Solidity
 /// @notice We use BLS signature aggregation to reduce the size of signature data to store on chain.
 /// @dev We can use G1 points for signatures and messages, and G2 points for public keys or vice versa
@@ -104,7 +106,7 @@ library BLS {
         bool success;
 
         assembly {
-            success := staticcall(sub(gas(), 2000), 6, input, 0xc0, r, 0x60)
+            success := staticcall(gas(), ECADD_ADDRESS, input, 0xc0, r, 0x60)
         }
 
         require(success, "G1 addition failed");
@@ -125,7 +127,7 @@ library BLS {
         input[2] = s;
         bool success;
         assembly {
-            success := staticcall(sub(gas(), 2000), 7, input, 0x80, r, 0x60)
+            success := staticcall(gas(), ECMUL_ADDRESS, input, 0x80, r, 0x60)
         }
         require(success, "G1 scalar multiplication failed");
     }
@@ -138,7 +140,7 @@ library BLS {
         input[2] = s;
         bool success;
         assembly {
-            success := staticcall(sub(gas(), 2000), 7, input, 0x80, r, 0x60)
+            success := staticcall(gas(), ECMUL_ADDRESS, input, 0x80, r, 0x60)
         }
         require(success, "G1 scalar multiplication failed");
     }
@@ -170,7 +172,7 @@ library BLS {
         ];
         uint256[1] memory out;
         assembly {
-            callSuccess := staticcall(sub(gas(), 2000), 8, input, 384, out, 0x20)
+            callSuccess := staticcall(gas(), BN254_ECPAIRING_ADDRESS, input, 384, out, 0x20)
         }
         return (out[0] != 0, callSuccess);
     }
@@ -185,7 +187,7 @@ library BLS {
             [rG1.x, rG1.y, N_G2_X1, N_G2_X0, N_G2_Y1, N_G2_Y0, G1_X, G1_Y, rG2.x[1], rG2.x[0], rG2.y[1], rG2.y[0]];
         uint256[1] memory out;
         assembly {
-            callSuccess := staticcall(sub(gas(), 2000), 8, input, 384, out, 0x20)
+            callSuccess := staticcall(gas(), BN254_ECPAIRING_ADDRESS, input, 384, out, 0x20)
         }
         return (out[0] != 0, callSuccess);
     }
@@ -217,7 +219,7 @@ library BLS {
         ];
         uint256[1] memory out;
         assembly {
-            callSuccess := staticcall(sub(gas(), 2000), 8, input, 384, out, 0x20)
+            callSuccess := staticcall(gas(), BN254_ECPAIRING_ADDRESS, input, 384, out, 0x20)
         }
         return (out[0] != 0, callSuccess);
     }
@@ -238,7 +240,7 @@ library BLS {
         bool success;
         // solium-disable-next-line security/no-inline-assembly
         assembly {
-            success := staticcall(sub(gas(), 2000), 6, bnAddInput, 128, p0, 64)
+            success := staticcall(gas(), ECADD_ADDRESS, bnAddInput, 128, p0, 64)
         }
         if (!success) revert BNAddFailed(bnAddInput);
         point = PointG1({x: p0[0], y: p0[1]});
@@ -618,7 +620,7 @@ library BLS {
             success :=
                 staticcall(
                     gas(),
-                    5,
+                    MODEXP_ADDRESS,
                     add(input, 32),
                     192,
                     0x00, // scratch space <- result
