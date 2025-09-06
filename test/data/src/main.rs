@@ -27,8 +27,8 @@ struct TestCase {
     application: String,
 }
 
-static BN254_DST: &str = "BN254G1_XMD:KECCAK-256_SSWU_RO";
-static BLS12_DST: &str = "BLS12_381G1_XMD:SHA-256_SVDW_RO";
+static BN254_DST: &str = "BN254G1_XMD:KECCAK-256_SVDW_RO";
+static BLS12_DST: &str = "BLS12_381G1_XMD:SHA-256_SSWU_RO";
 
 fn hex_serialize(p: &impl ark_serialize::CanonicalSerialize) -> String {
     let mut buf = vec![];
