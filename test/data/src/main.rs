@@ -27,6 +27,9 @@ struct TestCase {
     application: String,
 }
 
+static BN254_DST: &str = "BN254G1_XMD:KECCAK-256_SSWU_RO";
+static BLS12_DST: &str = "BLS12_381G1_XMD:SHA-256_SVDW_RO";
+
 fn hex_serialize(p: &impl ark_serialize::CanonicalSerialize) -> String {
     let mut buf = vec![];
     p.serialize_uncompressed(&mut buf).unwrap();
@@ -66,12 +69,8 @@ fn main() -> anyhow::Result<()> {
     serde_json::to_writer_pretty(
         File::create("testcases.json")?,
         &[
-            test_case_bls12_381("BLS12_381G1_XMD:SHA-256_SVDW_RO", msg, sk),
-            test_case_bn254(
-                "BN254G1_XMD:KECCAK-256_SSWU_RO",
-                msg,
-                ark_bn254::Fr::new(BigInt::new([0, 0, 0, 0xdeadbeef])),
-            ),
+            test_case_bls12_381(msg, sk),
+            test_case_bn254(msg, ark_bn254::Fr::new(BigInt::new([0, 0, 0, 0xdeadbeef]))),
             quicknet_test_case(
                 "8d2c8bbc37170dbacc5e280a21d4e195cff5f32a19fd6a58633fa4e4670478b5fb39bc13dd8f8c4372c5a76191198ac5",
                 20791007,
@@ -89,7 +88,8 @@ fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-fn test_case_bls12_381(dst: &str, msg: &str, sk: ark_bls12_381::Fr) -> TestCase {
+fn test_case_bls12_381(msg: &str, sk: ark_bls12_381::Fr) -> TestCase {
+    let dst = BLS12_DST;
     let p = (ark_bls12_381::G2Affine::generator() * sk).into_affine();
     let m =
         Bls12_381::hash_to_g1_custom::<sha2::Sha256>(msg.as_bytes(), dst.as_bytes()).into_affine();
@@ -112,7 +112,8 @@ fn test_case_bls12_381(dst: &str, msg: &str, sk: ark_bls12_381::Fr) -> TestCase 
     }
 }
 
-fn test_case_bn254(dst: &str, msg: &str, sk: ark_bn254::Fr) -> TestCase {
+fn test_case_bn254(msg: &str, sk: ark_bn254::Fr) -> TestCase {
+    let dst = BN254_DST;
     let p = (ark_bn254::G2Affine::generator() * sk).into_affine();
     let m =
         Bn254::hash_to_g1_custom::<sha3::Keccak256>(msg.as_bytes(), dst.as_bytes()).into_affine();
