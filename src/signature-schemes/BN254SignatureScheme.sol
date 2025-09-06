@@ -27,9 +27,8 @@ contract BN254SignatureScheme is ISignatureScheme {
         publicKey = BLS.g2Unmarshal(publicKeyBytes);
 
         // Set the DST based on the contract type
-        DST = abi.encodePacked(
-            "dcipher-", application, "-v01-BN254G1_XMD:KECCAK-256_SVDW_RO_", bytes32(block.chainid).toHexString(), "_"
-        );
+        DST =
+            abi.encodePacked(application, "-BN254G1_XMD:KECCAK-256_SVDW_RO_", bytes32(block.chainid).toHexString(), "_");
     }
 
     /// @notice Retrieves the public key associated with the decryption process.
