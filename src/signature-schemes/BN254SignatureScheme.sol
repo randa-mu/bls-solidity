@@ -13,12 +13,6 @@ import {ISignatureScheme} from "src/interfaces/ISignatureScheme.sol";
 contract BN254SignatureScheme is ISignatureScheme {
     using BytesLib for bytes32;
 
-    /// @notice Enum to represent the contract type
-    enum ContractType {
-        Bridge,
-        Upgrade
-    }
-
     /// @notice Links public keys of threshold network statically to signature scheme contracts and remove from constructor of sender contracts. Admin cannot update, simply use new scheme id.
     BLS.PointG2 private publicKey;
 
@@ -28,24 +22,13 @@ contract BN254SignatureScheme is ISignatureScheme {
     /// @notice Domain separation tag for the BLS signature scheme
     bytes public DST;
 
-    /// @notice Custom error for invalid contract type in the constructor.
-    /// @notice Should either be "bridge" or "upgrade"
-    error InvalidContractType();
-
     /// @notice Constructor for the BN254SignatureScheme contract.
-    /// @param contractType The type of contract (0 for Bridge, 1 for Upgrade).
-    constructor(bytes memory publicKeyBytes, ContractType contractType) {
-        // Validate the contract type
-        if (contractType != ContractType.Bridge && contractType != ContractType.Upgrade) {
-            revert InvalidContractType();
-        }
-
+    constructor(bytes memory publicKeyBytes, string memory application) {
         publicKey = BLS.g2Unmarshal(publicKeyBytes);
 
         // Set the DST based on the contract type
-        string memory typeString = contractType == ContractType.Bridge ? "bridge" : "upgrade";
         DST = abi.encodePacked(
-            "dcipher-", typeString, "-v01-BN254G1_XMD:KECCAK-256_SVDW_RO_", bytes32(block.chainid).toHexString(), "_"
+            "dcipher-", application, "-v01-BN254G1_XMD:KECCAK-256_SVDW_RO_", bytes32(block.chainid).toHexString(), "_"
         );
     }
 

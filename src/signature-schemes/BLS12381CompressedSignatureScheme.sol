@@ -22,9 +22,9 @@ contract BLS12381CompressedSignatureScheme is ISignatureScheme {
     BLS2.PointG2 private publicKey;
 
     /// @notice Sets the DST with the current chain ID as a hex string (converted to bytes)
-    constructor(bytes memory publicKeyBytes) {
+    constructor(bytes memory publicKeyBytes, string memory application) {
         DST = abi.encodePacked(
-            "dcipher-randomness-v01-BLS12381G1_XMD:SHA-256_SSWU_RO_", bytes32(block.chainid).toHexString(), "_"
+            "dcipher-", application, "-v01-BLS12381G1_XMD:SHA-256_SSWU_RO_", bytes32(block.chainid).toHexString(), "_"
         );
         publicKey = BLS2.g2Unmarshal(publicKeyBytes);
     }
