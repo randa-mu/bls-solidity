@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
-import {BLS2} from "src/libraries/BLS2.sol";
+import {BLS2} from "../libraries/BLS2.sol";
 
 contract QuicknetRegistry {
     mapping(uint64 => bytes32) public roundRandomness;
