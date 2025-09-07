@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
-import {BLS} from "src/libraries/BLS.sol";
+import {BLS} from "../libraries/BLS.sol";
 
 contract EvmnetRegistry {
     mapping(uint64 => bytes32) public roundRandomness;
