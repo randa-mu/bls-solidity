@@ -62,8 +62,8 @@ fn main() -> anyhow::Result<()> {
     serde_json::to_writer_pretty(
         File::create("testcases.json")?,
         &[
-            test_case_bls12_381(msg, bls12_sk),
-            test_case_bn254(msg, bn254_sk),
+            bls12_test_case(msg, bls12_sk),
+            bn254_test_case(msg, bn254_sk),
             quicknet_test_case(
                 "8d2c8bbc37170dbacc5e280a21d4e195cff5f32a19fd6a58633fa4e4670478b5fb39bc13dd8f8c4372c5a76191198ac5",
                 20791007,
@@ -129,7 +129,7 @@ fn dcipher_bn254_test_case(app: &str, msg: &str, sk: ark_bn254::Fr) -> TestCase 
     }
 }
 
-fn test_case_bls12_381(msg: &str, sk: ark_bls12_381::Fr) -> TestCase {
+fn bls12_test_case(msg: &str, sk: ark_bls12_381::Fr) -> TestCase {
     let dst = BLS12_DST;
     let p = (ark_bls12_381::G2Affine::generator() * sk).into_affine();
     let m =
@@ -153,7 +153,7 @@ fn test_case_bls12_381(msg: &str, sk: ark_bls12_381::Fr) -> TestCase {
     }
 }
 
-fn test_case_bn254(msg: &str, sk: ark_bn254::Fr) -> TestCase {
+fn bn254_test_case(msg: &str, sk: ark_bn254::Fr) -> TestCase {
     let dst = BN254_DST;
     let p = (ark_bn254::G2Affine::generator() * sk).into_affine();
     let m =
