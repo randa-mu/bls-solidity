@@ -9,15 +9,13 @@ ark-bn254 = "0.4.0"
 ark-bls12-381 = "0.4.0"
 ark-ec = "0.4.2"
 ark-ff = "0.4.2"
-utils = { git = "https://github.com/randa-mu/dcipher", version = "0.1.0", branch = "feat/randomness-bls12_381" }
-dcipher-agents = { git = "https://github.com/randa-mu/dcipher", version = "0.1.0", branch = "feat/randomness-bls12_381", features = ["evm"] }
+utils = { git = "https://github.com/randa-mu/dcipher", version = "0.1.0", features = ["bn254", "bls12-381"] }
 
 digest = "0.10"
 sha2 = "0.10.9"
 sha3 = "0.10"
 
 hex = "0.4.3"
-ark-serialize = "0.4.2"
 serde_json = "1.0.142"
 serde = "1.0.219"
 
