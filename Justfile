@@ -3,6 +3,7 @@ alias fmt := format
 
 test *args:
 	@just test/data/generate
+	@just test/bls_ffi/build
 	forge t {{args}}
 
 deploy-quicknet *args:
@@ -32,3 +33,4 @@ lint:
 format:
 	forge fmt
 	just test/data/format
+	just test/bls_ffi/format

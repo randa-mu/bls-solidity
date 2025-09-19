@@ -4,6 +4,7 @@ out = "out"
 libs = ["lib", "dependencies"]
 evm_version = "prague"
 fs_permissions = [{ access = "read", path = "./"}]
+ffi = true
 
 [lint]
 exclude_lints = ["mixed-case-variable", "mixed-case-function"]
