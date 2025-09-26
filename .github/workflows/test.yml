@@ -40,10 +40,21 @@ jobs:
           forge build --force --skip test --sizes
         id: build
 
-      - name: Run Forge tests
+      - name: Cache Rust Build Artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      # NOTE: Some tests use rust. Github-hosted runners have rust/rustup preinstalled
+      - name: Run tests
         run: |
-          forge test
-        id: forge-test
+          cargo install just@1.42.4
+          just test
+        id: tests
 
       - name: Run Forge snapshot
         run: |
