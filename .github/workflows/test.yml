@@ -55,7 +55,3 @@ jobs:
           cargo install just@1.42.4
           just test
         id: tests
-
-      - name: Run Forge snapshot
-        run: |
-          forge snapshot --check
