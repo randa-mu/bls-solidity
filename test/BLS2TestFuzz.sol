@@ -4,12 +4,12 @@ pragma solidity ^0.8.13;
 import {Test} from "forge-std-1.10.0/src/Test.sol";
 
 import {BLS2} from "src/libraries/BLS2.sol";
+
 contract BLS2TestFuzz is Test {
     function testFfiBlsVerifyGenerated(bytes32[2] memory privateKey, bytes memory message) public {
         // Generate a random message
         string memory messageHex = vm.toString(message);
         bytes memory privateKeyBytes = abi.encodePacked(privateKey[0], privateKey[1]);
-
 
         // Call the Rust binary to generate the test case
         string[] memory cmd = new string[](4);
@@ -17,8 +17,6 @@ contract BLS2TestFuzz is Test {
         cmd[1] = "BLS12381";
         cmd[2] = messageHex;
         cmd[3] = vm.toString(privateKeyBytes);
-
-        
 
         bytes memory out = vm.ffi(cmd);
         string memory output = string(out);
@@ -41,11 +39,8 @@ contract BLS2TestFuzz is Test {
         // emit log_named_bytes("Hashed Message sol", BLS.g1Marshal(hashedMessage));
 
         // Verify the signature using the public key
-        (bool pairingSuccess, bool callSuccess) = BLS2.verifySingle(
-            BLS2.g1Unmarshal(signatureBytes),
-            BLS2.g2Unmarshal(publicKeyBytes),
-            hashedMessage
-        );
+        (bool pairingSuccess, bool callSuccess) =
+            BLS2.verifySingle(BLS2.g1Unmarshal(signatureBytes), BLS2.g2Unmarshal(publicKeyBytes), hashedMessage);
 
         // Assert that the signature is valid
         assertTrue(pairingSuccess && callSuccess, "BLS2 signature verification failed");

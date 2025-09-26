@@ -2,13 +2,14 @@
 pragma solidity ^0.8.13;
 
 import {Test} from "forge-std-1.10.0/src/Test.sol";
-import {ModUtils}      from "src/libraries/ModExp.sol";
+import {ModUtils} from "src/libraries/ModExp.sol";
 import {ModexpInverse} from "src/libraries/ModExp.sol";
-import {ModexpSqrt}    from "src/libraries/ModExp.sol";
+import {ModexpSqrt} from "src/libraries/ModExp.sol";
 
 contract ModExpFuzz is Test {
     // BN254 field order
     uint256 constant N = 0x30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd47;
+
     function testFfiModExp1(uint256 base, uint256 exponent) public {
         // Convert base and exponent to hex strings
         string memory baseHex = vm.toString(abi.encodePacked(base));
@@ -128,7 +129,7 @@ contract ModExpFuzz is Test {
     }
 
     function _bytesToUint256(bytes memory b) internal pure returns (uint256 number) {
-        for(uint i=0;i < b.length;i++){
+        for (uint256 i = 0; i < b.length; i++) {
             number = number << 8;
             number = number | uint8(b[i]);
         }

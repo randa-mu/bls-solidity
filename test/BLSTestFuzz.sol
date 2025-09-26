@@ -4,9 +4,9 @@ pragma solidity ^0.8.13;
 import {Test} from "forge-std-1.10.0/src/Test.sol";
 
 import {BLS} from "src/libraries/BLS.sol";
+
 contract BLSTestFuzz is Test {
     function testFfiBlsVerifyGenerated(bytes32[2] memory privateKey, bytes memory message) public {
-
         // Generate a random message
         string memory messageHex = vm.toString(message);
         bytes memory privateKeyBytes = abi.encodePacked(privateKey[0], privateKey[1]);
@@ -38,11 +38,8 @@ contract BLSTestFuzz is Test {
         // emit log_named_bytes("Hashed Message sol", BLS.g1Marshal(hashedMessage));
 
         // Verify the signature using the public key
-        (bool pairingSuccess, bool callSuccess) = BLS.verifySingle(
-            BLS.g1Unmarshal(signatureBytes),
-            BLS.g2Unmarshal(publicKeyBytes),
-            hashedMessage
-        );
+        (bool pairingSuccess, bool callSuccess) =
+            BLS.verifySingle(BLS.g1Unmarshal(signatureBytes), BLS.g2Unmarshal(publicKeyBytes), hashedMessage);
 
         // Assert that the signature is valid
         assertTrue(pairingSuccess && callSuccess, "BLS signature verification failed");
@@ -68,7 +65,7 @@ contract BLSTestFuzz is Test {
         uint256[2] memory solPoint = BLS.mapToPoint(u);
         emit log_named_uint("Solidity mapToPoint x", solPoint[0]);
         emit log_named_uint("Solidity mapToPoint y", solPoint[1]);
-        
+
         // Parse Rust output
         string memory xHex = _extractValue(output, "mapToPointBN254: x = ");
         string memory yHex = _extractValue(output, "mapToPointBN254: y = ");
@@ -120,7 +117,7 @@ contract BLSTestFuzz is Test {
     }
 
     function _bytesToUint256(bytes memory b) internal pure returns (uint256 number) {
-        for(uint i=0;i < b.length;i++){
+        for (uint256 i = 0; i < b.length; i++) {
             number = number << 8;
             number = number | uint8(b[i]);
         }
