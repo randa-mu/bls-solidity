@@ -25,9 +25,9 @@ contract BLSTestFuzz is Test {
         string memory publicKeyHex = _extractValue(output, "public_key: ");
         string memory signatureHex = _extractValue(output, "signature: ");
 
-        // emit log_named_string("Message", messageHex);
-        // emit log_named_string("Public Key", publicKeyHex);
-        // emit log_named_string("Signature", signatureHex);
+        emit log_named_string("Message", messageHex);
+        emit log_named_string("Public Key", publicKeyHex);
+        emit log_named_string("Signature", signatureHex);
 
         // Convert public key and signature from hex to bytes
         bytes memory publicKeyBytes = vm.parseBytes(publicKeyHex);
@@ -35,7 +35,7 @@ contract BLSTestFuzz is Test {
 
         // Hash the message to a point on G1
         BLS.PointG1 memory hashedMessage = BLS.hashToPoint("BLS_DST", message);
-        // emit log_named_bytes("Hashed Message sol", BLS.g1Marshal(hashedMessage));
+        emit log_named_bytes("Hashed Message sol", BLS.g1Marshal(hashedMessage));
 
         // Verify the signature using the public key
         (bool pairingSuccess, bool callSuccess) =
@@ -71,8 +71,8 @@ contract BLSTestFuzz is Test {
         string memory yHex = _extractValue(output, "mapToPointBN254: y = ");
         uint256 xRust = _bytesToUint256(vm.parseBytes(xHex));
         uint256 yRust = _bytesToUint256(vm.parseBytes(yHex));
-        // emit log_named_uint("Rust mapToPoint x", xRust);
-        // emit log_named_uint("Rust mapToPoint y", yRust);
+        emit log_named_uint("Rust mapToPoint x", xRust);
+        emit log_named_uint("Rust mapToPoint y", yRust);
 
         // Compare results
         assertEq(solPoint[0], xRust, "mapToPoint x mismatch");

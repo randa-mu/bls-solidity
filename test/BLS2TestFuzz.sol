@@ -26,9 +26,9 @@ contract BLS2TestFuzz is Test {
         string memory publicKeyHex = _extractValue(output, "public_key: ");
         string memory signatureHex = _extractValue(output, "signature: ");
 
-        // emit log_named_string("Message", messageHex);
-        // emit log_named_string("Public Key", publicKeyHex);
-        // emit log_named_string("Signature", signatureHex);
+        emit log_named_string("Message", messageHex);
+        emit log_named_string("Public Key", publicKeyHex);
+        emit log_named_string("Signature", signatureHex);
 
         // Convert public key and signature from hex to bytes
         bytes memory publicKeyBytes = vm.parseBytes(publicKeyHex);
@@ -36,7 +36,7 @@ contract BLS2TestFuzz is Test {
 
         // Hash the message to a point on G1
         BLS2.PointG1 memory hashedMessage = BLS2.hashToPoint("BLS_DST", message);
-        // emit log_named_bytes("Hashed Message sol", BLS.g1Marshal(hashedMessage));
+        emit log_named_bytes("Hashed Message sol", BLS2.g1Marshal(hashedMessage));
 
         // Verify the signature using the public key
         (bool pairingSuccess, bool callSuccess) =
