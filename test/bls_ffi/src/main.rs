@@ -1,40 +1,17 @@
 use num_bigint::BigUint;
 use std::env;
 // use num_traits::{Zero, One};
-use ark_bls12_381;
-use ark_bn254;
-use ark_ec::{AffineRepr, CurveGroup, pairing::Pairing};
+use ark_ec::{AffineRepr, CurveGroup};
 use ark_ff::PrimeField;
-use ark_ff::{BigInt, Zero};
-use hex::FromHex;
+use ark_ff::Zero;
 
-use ark_std::{UniformRand, test_rng};
 
-use ark_std::rand::SeedableRng;
-use ark_std::rand::rngs::StdRng;
 
 use utils::hash_to_curve::CustomPairingHashToCurve;
-use utils::serialize::point::{
-    PointDeserializeCompressed, PointDeserializeUncompressed, PointSerializeCompressed,
-    PointSerializeUncompressed,
-};
-
-fn hex_ser_compressed(p: &impl PointSerializeCompressed) -> String {
-    hex::encode(p.ser_compressed().unwrap())
-}
+use utils::serialize::point::PointSerializeUncompressed;
 
 fn hex_ser_uncompressed(p: &impl PointSerializeUncompressed) -> String {
     hex::encode(p.ser_uncompressed().unwrap())
-}
-
-fn hex_deser_compressed<T: PointDeserializeCompressed>(s: &str) -> T {
-    let bytes = hex::decode(s).unwrap();
-    T::deser_compressed(&mut &bytes[..]).unwrap()
-}
-
-fn hex_deser_uncompressed<T: PointDeserializeUncompressed>(s: &str) -> T {
-    let bytes = hex::decode(s).unwrap();
-    T::deser_uncompressed(&mut &bytes[..]).unwrap()
 }
 
 fn hex_format_bytes(bytes: &[u8]) -> String {
@@ -273,9 +250,6 @@ fn main() {
         .unwrap();
         let z = BigUint::from(1u32);
         // Helper functions
-        fn modn(x: &BigUint, n: &BigUint) -> BigUint {
-            x % n
-        }
         fn addmod(a: &BigUint, b: &BigUint, n: &BigUint) -> BigUint {
             (a + b) % n
         }
