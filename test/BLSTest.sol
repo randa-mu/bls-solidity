@@ -1,6 +1,6 @@
 pragma solidity ^0.8;
 
-import {Test} from "forge-std-1.10.0/src/Test.sol";
+import {Test, console} from "forge-std-1.10.0/src/Test.sol";
 
 import {BLS} from "src/libraries/BLS.sol";
 
