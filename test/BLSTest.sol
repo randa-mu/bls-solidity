@@ -74,7 +74,8 @@ contract BLSTest is Test, Common {
 
     function test_marshal_unmarshal_with_dcipher_adkg_cli_output() public {
         // Test g2Unmarshal with known values
-        bytes memory g2data = hex"23cea71feea4dcee7a26226cebce3f5bfa7caf2022a5196e0299481b501169191ce5b8ddbe79ec2d49e2f558a6ca952c2a6e607d6e9a5d2406cb0610dd3bb6cd2638f452d5d029d83e3cd216ffa983b38011646cbf96d2b30956b92ae5836c3913ae657a3c88cbd18ebc7d4b1e577b4faedc71f9ace79db7823b8efa20bbf3f3";
+        bytes memory g2data =
+            hex"23cea71feea4dcee7a26226cebce3f5bfa7caf2022a5196e0299481b501169191ce5b8ddbe79ec2d49e2f558a6ca952c2a6e607d6e9a5d2406cb0610dd3bb6cd2638f452d5d029d83e3cd216ffa983b38011646cbf96d2b30956b92ae5836c3913ae657a3c88cbd18ebc7d4b1e577b4faedc71f9ace79db7823b8efa20bbf3f3";
         BLS.PointG2 memory pk = BLS.g2Unmarshal(g2data);
         console.log("pk.x[0]", pk.x[0]);
         console.log("pk.x[1]", pk.x[1]);
@@ -82,16 +83,7 @@ contract BLSTest is Test, Common {
         console.log("pk.y[1]", pk.y[1]);
 
         // Test g2Marshal with known values
-        BLS.PointG2 memory testPk = BLS.PointG2(
-            [
-                pk.x[0],
-                pk.x[1]
-            ],
-            [
-                pk.y[0],
-                pk.y[1]
-            ]
-        );
+        BLS.PointG2 memory testPk = BLS.PointG2([pk.x[0], pk.x[1]], [pk.y[0], pk.y[1]]);
         bytes memory marshaledG2 = BLS.g2Marshal(testPk);
         console.logBytes(marshaledG2);
         assert(keccak256(marshaledG2) == keccak256(g2data));
