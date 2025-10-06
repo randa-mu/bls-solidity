@@ -80,7 +80,7 @@ contract BLSTest is Test, Common {
 
         // Test g2Marshal with known values
         BLS.PointG2 memory testPk = BLS.PointG2([pk.x[0], pk.x[1]], [pk.y[0], pk.y[1]]);
-        
+
         bytes memory marshaledG2 = BLS.g2Marshal(testPk);
         assert(keccak256(marshaledG2) == keccak256(g2data));
 
