@@ -13,7 +13,7 @@ contract BLS2TestFuzz is Test {
 
         // Call the Rust binary to generate the test case
         string[] memory cmd = new string[](4);
-        cmd[0] = "./test/bls_ffi/target/release/bls_ffi";
+        cmd[0] = "./target/release/bls_ffi";
         cmd[1] = "BLS12381";
         cmd[2] = messageHex;
         cmd[3] = vm.toString(privateKeyBytes);
