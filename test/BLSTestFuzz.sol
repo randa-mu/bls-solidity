@@ -13,7 +13,7 @@ contract BLSTestFuzz is Test {
 
         // Call the Rust binary to generate the test case
         string[] memory cmd = new string[](4);
-        cmd[0] = "./test/bls_ffi/target/release/bls_ffi";
+        cmd[0] = "./target/release/bls_ffi";
         cmd[1] = "BN254";
         cmd[2] = messageHex;
         cmd[3] = vm.toString(privateKeyBytes);
@@ -53,7 +53,7 @@ contract BLSTestFuzz is Test {
 
         // Call Rust FFI for mapToPointBN254
         string[] memory cmd = new string[](3);
-        cmd[0] = "./test/bls_ffi/target/release/bls_ffi";
+        cmd[0] = "./target/release/bls_ffi";
         cmd[1] = "mapToPointBN254";
         cmd[2] = vm.toString(abi.encodePacked(u));
         bytes memory out = vm.ffi(cmd);
