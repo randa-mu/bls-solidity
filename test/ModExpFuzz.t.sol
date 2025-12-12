@@ -2,42 +2,12 @@
 pragma solidity ^0.8.13;
 
 import {Test} from "forge-std-1.10.0/src/Test.sol";
-import {ModUtils} from "src/libraries/ModExp.sol";
 import {ModexpInverse} from "src/libraries/ModExp.sol";
 import {ModexpSqrt} from "src/libraries/ModExp.sol";
 
 contract ModExpFuzz is Test {
     // BN254 field order
     uint256 constant N = 0x30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd47;
-
-    function testFfiModExp1(uint256 base, uint256 exponent) public {
-        // Convert base and exponent to hex strings
-        string memory baseHex = vm.toString(abi.encodePacked(base));
-        string memory exponentHex = vm.toString(abi.encodePacked(exponent));
-
-        // Call the Rust binary to compute modexp1
-        string[] memory cmd = new string[](4);
-        cmd[0] = "./target/release/bls_ffi";
-        cmd[1] = "modexp1";
-        cmd[2] = baseHex;
-        cmd[3] = exponentHex;
-
-        bytes memory out = vm.ffi(cmd);
-        string memory output = string(out);
-
-        emit log_named_uint("Base", base);
-        emit log_named_uint("Exponent", exponent);
-        emit log_named_string("FFI Output", output);
-        // Parse the output (modexp_result: 0x...)
-        string memory resultHex = _extractValue(output, "modexp_result: ");
-        bytes memory resultBytes = vm.parseBytes(resultHex);
-        uint256 rustResult = _bytesToUint256(resultBytes);
-
-        // Compute modexp in Solidity
-        uint256 solResult = ModUtils.modExp(base, exponent, N);
-
-        assertEq(rustResult, solResult, "Rust modexp1 and Solidity modExp should match");
-    }
 
     function testFfiModExpInverse(uint256 base) public {
         // Convert base to hex string

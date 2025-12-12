@@ -1,29 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
-library ModUtils {
-    /// @dev Wraps the modular exponent pre-compile introduced in Byzantium.
-    ///      Returns base^exponent mod p.
-    function modExp(uint256 base, uint256 exponent, uint256 p) internal view returns (uint256 o) {
-        assembly {
-            // Args for the precompile: [<length_of_BASE> <length_of_EXPONENT>
-            // <length_of_MODULUS> <BASE> <EXPONENT> <MODULUS>]
-            let output := mload(0x40)
-            let args := add(output, 0x20)
-            mstore(args, 0x20)
-            mstore(add(args, 0x20), 0x20)
-            mstore(add(args, 0x40), 0x20)
-            mstore(add(args, 0x60), base)
-            mstore(add(args, 0x80), exponent)
-            mstore(add(args, 0xa0), p)
-
-            // 0x05 is the modular exponent contract address
-            if iszero(staticcall(not(0), 0x05, args, 0xc0, output, 0x20)) { revert(0, 0) }
-            o := mload(output)
-        }
-    }
-}
-
 /// @title Compute Inverse by Modular Exponentiation
 /// @notice Compute $input^(N - 2) mod N$ using Addition Chain method.
 /// Where     N = 0x30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd47
