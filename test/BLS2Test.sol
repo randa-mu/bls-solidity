@@ -18,7 +18,7 @@ contract BLS2Test is Test, Common {
         assertEq(BLS2.g2Marshal(BLS2.g2Unmarshal(g2data)), g2data);
     }
 
-    function table_verify(TestCase memory tc) public {
+    function table_verify(TestCase memory tc) public view {
         if (!eq(tc.scheme, "BLS12381")) {
             return; // Skip row but not whole table
         }
@@ -37,7 +37,7 @@ contract BLS2Test is Test, Common {
         assert(callSuccess);
     }
 
-    function table_unmarshal_compressed(TestCase memory tc) public {
+    function table_unmarshal_compressed(TestCase memory tc) public view {
         if (!eq(tc.scheme, "BLS12381")) {
             return; // Skip row but not whole table
         }
@@ -56,11 +56,11 @@ contract BLS2Test is Test, Common {
         TestCase memory tc = fixture_tc()[3];
         BLS2.PointG2 memory pk = BLS2.g2Unmarshal(parseHex(tc.pk));
         bytes memory sigCompressedBytes = parseHex(tc.sig_compressed);
-        bytes memory msg = parseHex(tc.message);
+        bytes memory message = parseHex(tc.message);
 
         vm.startSnapshotGas("BLS2", "verify_compressed");
         BLS2.PointG1 memory sig = BLS2.g1UnmarshalCompressed(sigCompressedBytes);
-        BLS2.PointG1 memory m = BLS2.hashToPoint(bytes(tc.dst), msg);
+        BLS2.PointG1 memory m = BLS2.hashToPoint(bytes(tc.dst), message);
         (bool pairingSuccess, bool callSuccess) = BLS2.verifySingle(sig, pk, m);
         vm.stopSnapshotGas();
         assert(pairingSuccess && callSuccess);
@@ -71,11 +71,11 @@ contract BLS2Test is Test, Common {
         TestCase memory tc = fixture_tc()[3];
         BLS2.PointG2 memory pk = BLS2.g2Unmarshal(parseHex(tc.pk));
         bytes memory sigBytes = parseHex(tc.sig);
-        bytes memory msg = parseHex(tc.message);
+        bytes memory message = parseHex(tc.message);
 
         vm.startSnapshotGas("BLS2", "verify_uncompressed");
         BLS2.PointG1 memory sig = BLS2.g1Unmarshal(sigBytes);
-        BLS2.PointG1 memory m = BLS2.hashToPoint(bytes(tc.dst), msg);
+        BLS2.PointG1 memory m = BLS2.hashToPoint(bytes(tc.dst), message);
         (bool pairingSuccess, bool callSuccess) = BLS2.verifySingle(sig, pk, m);
         vm.stopSnapshotGas();
         assert(pairingSuccess && callSuccess);
