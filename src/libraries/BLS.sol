@@ -617,15 +617,14 @@ library BLS {
             p := add(p, 32)
             mstore(p, N) // N
 
-            success :=
-                staticcall(
-                    gas(),
-                    MODEXP_ADDRESS,
-                    add(input, 32),
-                    192,
-                    0x00, // scratch space <- result
-                    32
-                )
+            success := staticcall(
+                gas(),
+                MODEXP_ADDRESS,
+                add(input, 32),
+                192,
+                0x00, // scratch space <- result
+                32
+            )
             output := mload(0x00) // output <- result
         }
         if (!success) {
