@@ -17,7 +17,7 @@ contract ModExpFuzz is Test {
 
         // Call the Rust binary to compute modexp1
         string[] memory cmd = new string[](4);
-        cmd[0] = "./test/bls_ffi/target/release/bls_ffi";
+        cmd[0] = "./target/release/bls_ffi";
         cmd[1] = "modexp1";
         cmd[2] = baseHex;
         cmd[3] = exponentHex;
@@ -45,7 +45,7 @@ contract ModExpFuzz is Test {
 
         // Call the Rust binary to compute ModexpInverse
         string[] memory cmd = new string[](3);
-        cmd[0] = "./test/bls_ffi/target/release/bls_ffi";
+        cmd[0] = "./target/release/bls_ffi";
         cmd[1] = "ModexpInverse";
         cmd[2] = baseHex;
 
@@ -71,7 +71,7 @@ contract ModExpFuzz is Test {
 
         // Call the Rust binary to compute ModexpSqrt
         string[] memory cmd = new string[](3);
-        cmd[0] = "./test/bls_ffi/target/release/bls_ffi";
+        cmd[0] = "./target/release/bls_ffi";
         cmd[1] = "ModexpSqrt";
         cmd[2] = baseHex;
 
