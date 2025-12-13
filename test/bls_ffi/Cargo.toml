@@ -5,10 +5,10 @@ edition = "2024"
 
 [dependencies]
 anyhow = "1.0.99"
-ark-bn254 = "0.4.0"
-ark-bls12-381 = "0.4.0"
-ark-ec = "0.4.2"
-ark-ff = "0.4.2"
+ark-bn254 = "0.5"
+ark-bls12-381 = "0.5"
+ark-ec = "0.5"
+ark-ff = "0.5"
 utils = { git = "https://github.com/randa-mu/dcipher", version = "0.1.0", features = ["bn254", "bls12-381"] }
 
 digest = "0.10"
@@ -23,4 +23,4 @@ num-bigint = "0.4"
 
 [patch.crates-io]
 # Use custom patch to fix arkworks' FieldHasher
-ark-ff = { git = 'https://github.com/azixus/algebra', branch = "fix/fieldHasher"}
+ark-ff = { git = 'https://github.com/azixus/algebra', branch = "fix/fieldHasher-v0.5.0"}
