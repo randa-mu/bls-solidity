@@ -17,7 +17,7 @@
     "m_expected": "0beef402c4c94fac44fe220ef0cb7f56fb2d2f6a0500930282c170ee6afa447f1cb8fd2d4488f28d14d1ab7a4ac224049e24f245481e670a51178d2895bb10a1",
     "scheme": "BN254",
     "sig": "3051b9c6270891200c4f7bc979485abafb3640fe96e622f014c317341a5def5c07fd4fa7c3da14eb90f03c7fd57b0c8c78996b24c1aed724f2f0bbc31ec7f2b9",
-    "sig_compressed": "not applicable",
+    "sig_compressed": "b051b9c6270891200c4f7bc979485abafb3640fe96e622f014c317341a5def5c",
     "drand_round_number": 0,
     "application": ""
   },
@@ -50,7 +50,7 @@
     "m_expected": "1626082c3dd0751bdaaf8c3e709b5dd7cdedf45d4e81a5aa3e270f1e78924b322bf29ab3af54dfe3c053ad4efa93db05d3586368463e9d7334c7ba61f6f4e955",
     "scheme": "BN254",
     "sig": "01d65d6128f4b2df3d08de85543d8efe06b0281d0770246ae3672e8ddd3efda0269373123458f0b5c0073eeed1c816a06809e127421513e34ee07df6987910b3",
-    "sig_compressed": "not applicable",
+    "sig_compressed": "c1d65d6128f4b2df3d08de85543d8efe06b0281d0770246ae3672e8ddd3efda0",
     "drand_round_number": 9337227,
     "application": ""
   },
@@ -72,7 +72,7 @@
     "m_expected": "08b70ec12bec2465bd5e245a7ddde3e619dba68b6e59dc4fce6bb1c58d76451a0f78beba66e72e912d5699966a3c4de5ea28e792b267671552e7d07936fc78aa",
     "scheme": "BN254",
     "sig": "11c4a53e9b6daab0578b02e08ada2921a4b01de3d090111094f077200a79ba81295f100f7d5f2dd4c38bdbe573ffa7b69de99dd7dd7b84b31fe2ce9126b583f7",
-    "sig_compressed": "not applicable",
+    "sig_compressed": "d1c4a53e9b6daab0578b02e08ada2921a4b01de3d090111094f077200a79ba81",
     "drand_round_number": 0,
     "application": "dcipher-helloworld-v01"
   }
