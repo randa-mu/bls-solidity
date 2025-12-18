@@ -2,4 +2,4 @@ generate:
 	cargo run
 
 format:
-	forge fmt
+	cargo fmt

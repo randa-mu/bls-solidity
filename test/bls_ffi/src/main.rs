@@ -5,8 +5,6 @@ use ark_ec::{AffineRepr, CurveGroup};
 use ark_ff::PrimeField;
 use ark_ff::Zero;
 
-
-
 use utils::hash_to_curve::CustomPairingHashToCurve;
 use utils::serialize::point::PointSerializeUncompressed;
 
