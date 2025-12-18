@@ -123,7 +123,7 @@ fn dcipher_bn254_test_case(app: &str, msg: &str, sk: ark_bn254::Fr) -> TestCase 
         pk: hex_ser_uncompressed(&p),
         m_expected: hex_ser_uncompressed(&m),
         sig: hex_ser_uncompressed(&s),
-        sig_compressed: "not applicable".to_owned(),
+        sig_compressed: hex_ser_compressed(&s),
         drand_round_number: 0,
         application: app.to_owned(),
     }
@@ -169,7 +169,7 @@ fn bn254_test_case(msg: &str, sk: ark_bn254::Fr) -> TestCase {
         pk: hex_ser_uncompressed(&p),
         m_expected: hex_ser_uncompressed(&m),
         sig: hex_ser_uncompressed(&s),
-        sig_compressed: "not applicable".to_owned(),
+        sig_compressed: hex_ser_compressed(&s),
         drand_round_number: 0,
         application: "".to_owned(),
     }
@@ -219,7 +219,7 @@ fn evmnet_test_case(sig: &str, round: u64) -> TestCase {
         pk: pk.to_owned(),
         m_expected: hex_ser_uncompressed(&m),
         sig: sig.to_owned(),
-        sig_compressed: "not applicable".to_owned(),
+        sig_compressed: hex_ser_compressed(&s),
         drand_round_number: round,
         application: "".to_owned(),
     }

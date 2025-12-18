@@ -40,6 +40,18 @@ contract BLSTest is Test, Common {
         assertEq(BLS.g2Marshal(BLS.g2Unmarshal(g2data)), g2data);
     }
 
+    function table_unmarshal_compressed(TestCase memory tc) public view {
+        if (!eq(tc.scheme, "BN254")) {
+            return; // Skip row but not whole table
+        }
+
+        BLS.PointG1 memory expected = BLS.g1Unmarshal(parseHex(tc.sig));
+        BLS.PointG1 memory actual = BLS.g1UnmarshalCompressed(parseHex(tc.sig_compressed));
+
+        assert(actual.x == expected.x);
+        assert(actual.y == expected.y);
+    }
+
     function table_verify(TestCase memory tc) public {
         if (!eq(tc.scheme, "BN254")) {
             return; // Skip row but not whole table
@@ -55,6 +67,21 @@ contract BLSTest is Test, Common {
         (bool pairingSuccess, bool callSuccess) = BLS.verifySingle(sig, pk, m);
         assert(pairingSuccess);
         assert(callSuccess);
+    }
+
+    function test_snapshot_verify_compressed() public {
+        // snapshots do not work well in table tests as of Foundry 1.3.1, workaround here.
+        TestCase memory tc = fixture_tc()[4];
+        BLS.PointG2 memory pk = BLS.g2Unmarshal(parseHex(tc.pk));
+        bytes memory sigBytes = parseHex(tc.sig_compressed);
+        bytes memory msg = parseHex(tc.message);
+
+        vm.startSnapshotGas("BLS", "verify_compressed");
+        BLS.PointG1 memory sig = BLS.g1UnmarshalCompressed(sigBytes);
+        BLS.PointG1 memory m = BLS.hashToPoint(bytes(tc.dst), msg);
+        (bool pairingSuccess, bool callSuccess) = BLS.verifySingle(sig, pk, m);
+        vm.stopSnapshotGas();
+        assert(pairingSuccess && callSuccess);
     }
 
     function test_snapshot_verify_uncompressed() public {

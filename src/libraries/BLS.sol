@@ -354,6 +354,47 @@ library BLS {
         return PointG1(uint256(x), uint256(y));
     }
 
+    function g1UnmarshalCompressed(bytes memory m) internal pure returns (PointG1 memory) {
+        require(m.length == 32, "Invalid G1 bytes length");
+
+        uint256 x;
+        uint256 y;
+
+        uint8 flags;
+        bool larger = false;
+
+        assembly {
+            x := mload(add(m, 0x20))
+            flags := shr(254, x)
+            x := and(x, 0x3FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+        }
+
+        if (flags == 0) {
+            revert("Invalid G1 point: not compressed");
+        }
+        if (flags == 1) {
+            revert("unsupported: point at infinity");
+        }
+        if (flags == 3) {
+            larger = true;
+        }
+
+        uint256 y2 = addmod(mulmod(mulmod(x, x, N), x, N), 3, N); // y^2 = x^3 + 3
+        bool ok;
+        (y, ok) = sqrt(y2);
+        assert(ok);
+
+        uint256 alt_y = N - y;
+
+        bool do_swap = y < alt_y;
+        do_swap = larger == do_swap;
+        if (do_swap) {
+            y = alt_y;
+        }
+
+        return PointG1(x, y);
+    }
+
     /// @notice Marshals a point on G1 to bytes form.
     /// @param point A G1 point.
     /// @return 64 bytes containing the representation of the point, using 32-byte big-endian integers for x, then y.
