@@ -22,7 +22,6 @@ struct TestCase {
     // points are marshalled then hex encoded
     pk: String,
     m_expected: String,
-    scheme: String, // either "BN254" or "BLS12381"
     sig: String,
     sig_compressed: String,
     drand_round_number: u64, // Optional: 0 if n/a
@@ -60,10 +59,9 @@ fn main() -> anyhow::Result<()> {
     let bn254_sk = ark_bn254::Fr::new(BigInt::new([0, 0, 0, 0xdeadbeef]));
 
     serde_json::to_writer_pretty(
-        File::create("testcases.json")?,
+        File::create("testcases_bls12.json")?,
         &[
             bls12_test_case(msg, bls12_sk),
-            bn254_test_case(msg, bn254_sk),
             quicknet_test_case(
                 "8d2c8bbc37170dbacc5e280a21d4e195cff5f32a19fd6a58633fa4e4670478b5fb39bc13dd8f8c4372c5a76191198ac5",
                 20791007,
@@ -72,11 +70,17 @@ fn main() -> anyhow::Result<()> {
                 "8a60486975062d9f06633c284cf1a7b46fb343f56f329f180530ca40a9e86320244f4fbfc37ae866cf25ef499665a31f",
                 20905307,
             ),
+            dcipher_bls12_test_case("dcipher-helloworld-v01", msg, bls12_sk),
+        ],
+    )?;
+    serde_json::to_writer_pretty(
+        File::create("testcases_bn254.json")?,
+        &[
+            bn254_test_case(msg, bn254_sk),
             evmnet_test_case(
                 "01d65d6128f4b2df3d08de85543d8efe06b0281d0770246ae3672e8ddd3efda0269373123458f0b5c0073eeed1c816a06809e127421513e34ee07df6987910b3",
                 9337227,
             ),
-            dcipher_bls12_test_case("dcipher-helloworld-v01", msg, bls12_sk),
             dcipher_bn254_test_case("dcipher-helloworld-v01", msg, bn254_sk),
         ],
     )?;
@@ -96,7 +100,6 @@ fn dcipher_bls12_test_case(app: &str, msg: &str, sk: ark_bls12_381::Fr) -> TestC
 
     TestCase {
         dst: dst.to_owned(),
-        scheme: "BLS12381".to_owned(),
         message: hex::encode(msg),
         pk: hex_ser_uncompressed(&p),
         m_expected: hex_ser_uncompressed(&m),
@@ -118,7 +121,6 @@ fn dcipher_bn254_test_case(app: &str, msg: &str, sk: ark_bn254::Fr) -> TestCase 
 
     TestCase {
         dst: dst.to_owned(),
-        scheme: "BN254".to_owned(),
         message: hex::encode(msg),
         pk: hex_ser_uncompressed(&p),
         m_expected: hex_ser_uncompressed(&m),
@@ -142,7 +144,6 @@ fn bls12_test_case(msg: &str, sk: ark_bls12_381::Fr) -> TestCase {
 
     TestCase {
         dst: dst.to_owned(),
-        scheme: "BLS12381".to_owned(),
         message: hex::encode(msg),
         pk: hex_ser_uncompressed(&p),
         m_expected: hex_ser_uncompressed(&m),
@@ -164,7 +165,6 @@ fn bn254_test_case(msg: &str, sk: ark_bn254::Fr) -> TestCase {
 
     TestCase {
         dst: dst.to_owned(),
-        scheme: "BN254".to_owned(),
         message: hex::encode(msg),
         pk: hex_ser_uncompressed(&p),
         m_expected: hex_ser_uncompressed(&m),
@@ -190,7 +190,6 @@ fn quicknet_test_case(sig: &str, round: u64) -> TestCase {
 
     TestCase {
         dst: dst.to_owned(),
-        scheme: "BLS12381".to_owned(),
         message: hex::encode(msg),
         pk: hex_ser_uncompressed(&p),
         m_expected: hex_ser_uncompressed(&m),
@@ -214,7 +213,6 @@ fn evmnet_test_case(sig: &str, round: u64) -> TestCase {
 
     TestCase {
         dst: dst.to_owned(),
-        scheme: "BN254".to_owned(),
         message: hex::encode(msg),
         pk: pk.to_owned(),
         m_expected: hex_ser_uncompressed(&m),

@@ -7,8 +7,12 @@ import {BLS12381CompressedSignatureScheme} from "src/signature-schemes/BLS12381C
 import {Common} from "test/Common.sol";
 
 contract BLS12381CompressedSignatureSchemeTest is Test, Common {
+    function fixture_tc() public view returns (TestCase[] memory) {
+        return loadBls12TestCases();
+    }
+
     function table_verify(TestCase memory tc) public {
-        if (!eq(tc.scheme, "BLS12381") || eq(tc.application, "")) {
+        if (eq(tc.application, "")) {
             return; // Skip row but not whole table
         }
         BLS12381CompressedSignatureScheme scheme =
