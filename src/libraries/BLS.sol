@@ -69,7 +69,7 @@ library BLS {
 
     error BNAddFailed(uint256[4] input);
     error InvalidFieldElement(uint256 x);
-    error MapToPointFailed(uint256 noSqrt);
+    error MapToPointFailed();
     error InvalidDSTLength(bytes dst);
     error ModExpFailed(uint256 base, uint256 exponent, uint256 modulus);
 
@@ -554,21 +554,21 @@ library BLS {
 
         bool hasRoot;
         uint256 gx;
-        if (legendre(g(x1)) == 1) {
+        (p[1], hasRoot) = sqrt(g(x1));
+        if (hasRoot) {
             p[0] = x1;
-            gx = g(x1);
-            (p[1], hasRoot) = sqrt(gx);
-            if (!hasRoot) revert MapToPointFailed(gx);
-        } else if (legendre(g(x2)) == 1) {
-            p[0] = x2;
-            gx = g(x2);
-            (p[1], hasRoot) = sqrt(gx);
-            if (!hasRoot) revert MapToPointFailed(gx);
         } else {
-            p[0] = x3;
-            gx = g(x3);
-            (p[1], hasRoot) = sqrt(gx);
-            if (!hasRoot) revert MapToPointFailed(gx);
+            (p[1], hasRoot) = sqrt(g(x2));
+            if (hasRoot) {
+                p[0] = x2;
+            } else {
+                (p[1], hasRoot) = sqrt(g(x3));
+                if (hasRoot) {
+                    p[0] = x3;
+                } else {
+                    revert MapToPointFailed();
+                }
+            }
         }
         if (sgn0(u) != sgn0(p[1])) {
             p[1] = N - p[1];
@@ -583,52 +583,5 @@ library BLS {
     /// @notice https://datatracker.ietf.org/doc/html/rfc9380#name-the-sgn0-function
     function sgn0(uint256 x) private pure returns (uint256) {
         return x % 2;
-    }
-
-    /// @notice Compute Legendre symbol of u
-    /// @param u Field element
-    /// @return 1 if u is a quadratic residue, -1 if not, or 0 if u = 0 (mod p)
-    function legendre(uint256 u) private view returns (int8) {
-        uint256 x = modexpLegendre(u);
-        if (x == N - 1) {
-            return -1;
-        }
-        if (x != 0 && x != 1) {
-            revert MapToPointFailed(u);
-        }
-        return int8(int256(x));
-    }
-
-    /// @notice This is cheaper than an addchain for exponent (N-1)/2
-    function modexpLegendre(uint256 u) private view returns (uint256 output) {
-        bytes memory input = new bytes(192);
-        bool success;
-        assembly {
-            let p := add(input, 32)
-            mstore(p, 32) // len(u)
-            p := add(p, 32)
-            mstore(p, 32) // len(exp)
-            p := add(p, 32)
-            mstore(p, 32) // len(mod)
-            p := add(p, 32)
-            mstore(p, u) // u
-            p := add(p, 32)
-            mstore(p, C5) // (N-1)/2
-            p := add(p, 32)
-            mstore(p, N) // N
-
-            success := staticcall(
-                gas(),
-                MODEXP_ADDRESS,
-                add(input, 32),
-                192,
-                0x00, // scratch space <- result
-                32
-            )
-            output := mload(0x00) // output <- result
-        }
-        if (!success) {
-            revert ModExpFailed(u, C5, N);
-        }
     }
 }

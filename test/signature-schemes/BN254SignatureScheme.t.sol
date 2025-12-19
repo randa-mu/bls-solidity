@@ -7,8 +7,12 @@ import {BN254SignatureScheme} from "src/signature-schemes/BN254SignatureScheme.s
 import {Common} from "test/Common.sol";
 
 contract BN254SignatureSchemeTest is Test, Common {
+    function fixture_tc() public view returns (TestCase[] memory) {
+        return loadBn254TestCases();
+    }
+
     function table_verify(TestCase memory tc) public {
-        if (!eq(tc.scheme, "BN254") || eq(tc.application, "")) {
+        if (eq(tc.application, "")) {
             return; // Skip row but not whole table
         }
         BN254SignatureScheme scheme = new BN254SignatureScheme(parseHex(tc.pk), tc.application);
