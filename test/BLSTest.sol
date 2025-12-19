@@ -7,6 +7,10 @@ import {BLS} from "src/libraries/BLS.sol";
 import {Common} from "test/Common.sol";
 
 contract BLSTest is Test, Common {
+    function fixture_tc() public view returns (TestCase[] memory) {
+        return loadBn254TestCases();
+    }
+
     function test_sample_signature() public {
         BLS.PointG2 memory pk = BLS.PointG2(
             [
@@ -30,9 +34,6 @@ contract BLSTest is Test, Common {
     }
 
     function table_marshal_unmarshal(TestCase memory tc) public pure {
-        if (!eq(tc.scheme, "BN254")) {
-            return; // Skip row but not whole table
-        }
         bytes memory g1data = parseHex(tc.sig);
         assertEq(BLS.g1Marshal(BLS.g1Unmarshal(g1data)), g1data);
 
@@ -40,36 +41,23 @@ contract BLSTest is Test, Common {
         assertEq(BLS.g2Marshal(BLS.g2Unmarshal(g2data)), g2data);
     }
 
-    function table_verify(TestCase memory tc) public {
-        if (!eq(tc.scheme, "BN254")) {
-            return; // Skip row but not whole table
-        }
+    function table_hashToPoint(TestCase memory tc) public view {
         BLS.PointG2 memory pk = BLS.g2Unmarshal(parseHex(tc.pk));
-        BLS.PointG1 memory sig = BLS.g1Unmarshal(parseHex(tc.sig));
         BLS.PointG1 memory m_expected = BLS.g1Unmarshal(parseHex(tc.m_expected));
 
         BLS.PointG1 memory m = BLS.hashToPoint(bytes(tc.dst), parseHex(tc.message));
         assert(m.x == m_expected.x);
         assert(m.y == m_expected.y);
+    }
 
+    function table_verify_uncompressed(TestCase memory tc) public {
+        BLS.PointG2 memory pk = BLS.g2Unmarshal(parseHex(tc.pk));
+        BLS.PointG1 memory sig = BLS.g1Unmarshal(parseHex(tc.sig));
+
+        BLS.PointG1 memory m = BLS.hashToPoint(bytes(tc.dst), parseHex(tc.message));
         (bool pairingSuccess, bool callSuccess) = BLS.verifySingle(sig, pk, m);
         assert(pairingSuccess);
         assert(callSuccess);
-    }
-
-    function test_snapshot_verify_uncompressed() public {
-        // snapshots do not work well in table tests as of Foundry 1.3.1, workaround here.
-        TestCase memory tc = fixture_tc()[4];
-        BLS.PointG2 memory pk = BLS.g2Unmarshal(parseHex(tc.pk));
-        bytes memory sigBytes = parseHex(tc.sig);
-        bytes memory msg = parseHex(tc.message);
-
-        vm.startSnapshotGas("BLS", "verify_uncompressed");
-        BLS.PointG1 memory sig = BLS.g1Unmarshal(sigBytes);
-        BLS.PointG1 memory m = BLS.hashToPoint(bytes(tc.dst), msg);
-        (bool pairingSuccess, bool callSuccess) = BLS.verifySingle(sig, pk, m);
-        vm.stopSnapshotGas();
-        assert(pairingSuccess && callSuccess);
     }
 
     function test_marshal_unmarshal_with_dcipher_adkg_cli_output() public {
